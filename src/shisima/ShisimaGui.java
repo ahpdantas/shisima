@@ -10,6 +10,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import shisima.PiecesDragAndDropListener;
+
 public class ShisimaGui extends JPanel
 {
 	private Image imgBackground;
@@ -18,9 +20,33 @@ public class ShisimaGui extends JPanel
 	private static final int TYPE_PLAYER_1 = 1;
 	private static final int TYPE_PLAYER_2 = 2;
 	
+	private static final int BOARD_START_X = 300;
+	private static final int BOARD_START_Y = 50;
+	
 	public ShisimaGui(){
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
+		
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 175,
+				BOARD_START_Y + 25	);
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 69,
+				BOARD_START_Y + 69	);
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 281,
+				BOARD_START_Y + 69	);
+		
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 69,
+				BOARD_START_Y + 281	);
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 175,
+				BOARD_START_Y + 325	);
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 281,
+				BOARD_START_Y + 281	);
+		
+		// add mouse listeners to enable drag and drop
+		//
+		PiecesDragAndDropListener listener = new PiecesDragAndDropListener(this.pieces,
+				this);
+		this.addMouseListener(listener);
+		this.addMouseMotionListener(listener);
 		
 		// create application frame and set visible
 		//
@@ -69,7 +95,7 @@ public class ShisimaGui extends JPanel
 		}
 		filename += ".png";
 
-		URL urlPieceImg = getClass().getResource("/ch01/img/" + filename);
+		URL urlPieceImg = getClass().getResource("/shisima/img/" + filename);
 		return new ImageIcon(urlPieceImg).getImage();
 	}
 	
