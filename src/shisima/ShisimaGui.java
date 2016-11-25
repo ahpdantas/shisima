@@ -1,7 +1,11 @@
 package shisima;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,56 +13,43 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import shisima.PiecesDragAndDropListener;
+
 
 public class ShisimaGui extends JPanel
 {
+	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
 	private List<Piece> pieces = new ArrayList<Piece>();
+	
+
+	private static final int BOARD_START_X = 50;
+	private static final int BOARD_START_Y = 50;
 	
 	private static final int TYPE_PLAYER_1 = 1;
 	private static final int TYPE_PLAYER_2 = 2;
 	
-	private static final int BOARD_START_X = 300;
-	private static final int BOARD_START_Y = 50;
-	
 	public ShisimaGui(){
+				
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
 		
-		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 175,
-				BOARD_START_Y + 25	);
-		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 69,
-				BOARD_START_Y + 69	);
-		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 281,
-				BOARD_START_Y + 69	);
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 175, BOARD_START_Y + 25);
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 69, BOARD_START_Y + 69);
+		createAndAddPiece(TYPE_PLAYER_1, BOARD_START_X + 281, BOARD_START_Y + 69);
 		
-		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 69,
-				BOARD_START_Y + 281	);
-		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 175,
-				BOARD_START_Y + 325	);
-		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 281,
-				BOARD_START_Y + 281	);
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 69, BOARD_START_Y + 281);
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 175, BOARD_START_Y + 325);
+		createAndAddPiece(TYPE_PLAYER_2, BOARD_START_X + 281, BOARD_START_Y + 281);
 		
 		// add mouse listeners to enable drag and drop
 		//
-		PiecesDragAndDropListener listener = new PiecesDragAndDropListener(this.pieces,
-				this);
+		PiecesDragAndDropListener listener = new PiecesDragAndDropListener(this.pieces, this);
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
 		
-		// create application frame and set visible
-		//
-		JFrame f = new JFrame();
-		f.setVisible(true);
-		
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.add(this);
-		f.setResizable(false);
-		f.setSize(this.imgBackground.getWidth(null), this.imgBackground.getHeight(null));
-		
 	}
+		
 	
 	/**
 	 * create a game piece
@@ -107,7 +98,9 @@ public class ShisimaGui extends JPanel
 		}
 	}
 	
-	public static void main(String[] args) {
-		new ShisimaGui();
-	}
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(this.imgBackground.getWidth(null), this.imgBackground.getHeight(null));
+    }
+
 }
