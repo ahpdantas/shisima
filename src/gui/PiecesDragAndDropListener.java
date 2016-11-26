@@ -1,4 +1,4 @@
-package shisima;
+package gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -7,16 +7,16 @@ import java.util.List;
 
 public class PiecesDragAndDropListener implements MouseListener, MouseMotionListener {
 
-	private List<Piece> pieces;
+	private List<PieceGui> piecesGui;
 	private ShisimaGui shisimaGui;
 	
-	private Piece dragPiece;
+	private PieceGui dragPiece;
 	private int dragOffsetX;
 	private int dragOffsetY;
 	
 
-	public PiecesDragAndDropListener(List<Piece> pieces, ShisimaGui shisimaGui) {
-		this.pieces = pieces;
+	public PiecesDragAndDropListener(List<PieceGui> pieces, ShisimaGui shisimaGui) {
+		this.piecesGui = pieces;
 		this.shisimaGui = shisimaGui;
 	}
 
@@ -29,8 +29,8 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 		// we check the list from top to buttom
 		// (therefore we itereate in reverse order)
 		//
-		for (int i = this.pieces.size()-1; i >= 0; i--) {
-			Piece piece = this.pieces.get(i);
+		for (int i = this.piecesGui.size()-1; i >= 0; i--) {
+			PieceGui piece = this.piecesGui.get(i);
 			
 			if( mouseOverPiece(piece,x,y)){
 				// calculate offset, because we do not want the drag piece
@@ -46,8 +46,8 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 		
 		// move drag piece to the top of the list
 		if(this.dragPiece != null){
-			this.pieces.remove( this.dragPiece );
-			this.pieces.add(this.dragPiece);
+			this.piecesGui.remove( this.dragPiece );
+			this.piecesGui.add(this.dragPiece);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 	 * @param y y coordinate of mouse
 	 * @return true if mouse is over the piece
 	 */
-	private boolean mouseOverPiece(Piece piece, int x, int y) {
+	private boolean mouseOverPiece(PieceGui piece, int x, int y) {
 		return piece.getX() <= x 
 			&& piece.getX()+piece.getWidth() >= x
 			&& piece.getY() <= y

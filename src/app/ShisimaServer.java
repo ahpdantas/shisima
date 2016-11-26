@@ -1,33 +1,41 @@
-package shisima;
+package app;
 
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 
 import javax.swing.JFrame;
 
-import shisima.ChatGui;
-import shisima.ShisimaGui;
+import core.ChatService;
+import gui.ShisimaGui;
+import net.NetworkService;
 
-public class ShisimaApp extends JFrame {
+public class ShisimaServer extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private LayoutManager layout;
 	
-	public ShisimaApp(){
-		
+	
+	public ShisimaServer(){
 		// create application frame and set visible
 		layout = new FlowLayout();
 		this.setLayout(layout);
 		
-		this.add(new ChatGui());
-		this.add(new ShisimaGui());
+		
+		NetworkService network = new NetworkService(5000);
+		ChatService chat = new ChatService(network);
+				
+		ShisimaGui shisima = new ShisimaGui();
+		
+		this.add(chat);
+		this.add(shisima);
 		
 		this.pack();
 		
 	    this.setVisible(true);
 	    this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+		
 	}
 	
 	public static void main(String[] args) {
-		new ShisimaApp();
+		new ShisimaServer();
 	}
 }
