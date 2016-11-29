@@ -18,6 +18,7 @@ public class ShisimaClient extends JFrame {
 		// create application frame and set visible
 		layout = new FlowLayout();
 		this.setLayout(layout);
+		this.setTitle("Shisima Game Client");
 		
 		
 		NetworkService network = new NetworkService("127.0.0.1", 5000);

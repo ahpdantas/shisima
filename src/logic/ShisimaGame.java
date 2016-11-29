@@ -12,26 +12,25 @@ public class ShisimaGame {
 	
 	public ShisimaGame(){
 
-		createAndAddPiece(Piece.TYPE_PLAYER_1, 0, 0);
-		createAndAddPiece(Piece.TYPE_PLAYER_1, 0, 1);
-		createAndAddPiece(Piece.TYPE_PLAYER_1, 0, 2);
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_1);
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_2);
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_3);
 		
-		createAndAddPiece(Piece.TYPE_PLAYER_2, 2, 0);
-		createAndAddPiece(Piece.TYPE_PLAYER_2, 2, 1);
-		createAndAddPiece(Piece.TYPE_PLAYER_2, 2, 2);
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_1);
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_2);
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_3);
 		
 	}
 	
 	/**
 	 * create a game piece
 	 * 
-	 * @param color color constant
-	 * @param type type constant
-	 * @param x x position of upper left corner
-	 * @param y y position of upper left corner
+	 * @param player
+	 * @param row on of Pieces.ROW_..
+	 * @param column on of Pieces.COLUMN_..
 	 */
-	private void createAndAddPiece(int player, int x, int y) {
-		Piece piece = new Piece(player, x, y);
+	private void createAndAddPiece(int player, int row, int column) {
+		Piece piece = new Piece(player, row, column);
 		this.pieces.add(piece);
 	}
 	
@@ -44,7 +43,17 @@ public class ShisimaGame {
 	 * @param targetColumn the target column (Piece.COLUMN_..)
 	 */
 	public void movePiece(int sourceRow, int sourceColumn, int targetRow, int targetColumn) {
+		Piece piece = getPieceAtLocation(sourceRow, sourceColumn);
+		Piece targetPiece = getPieceAtLocation(targetRow, targetColumn);
 		
+		if( targetPiece == null ){
+			if( ((targetRow == sourceRow )&&( Math.abs(targetColumn- sourceColumn) <= 1 ))||
+					((targetColumn == sourceColumn )&&( Math.abs(targetRow- sourceRow) <= 1 ))||
+					( targetColumn == Piece.COLUMN_2)&&(targetRow == Piece.ROW_2)){
+				piece.setRow(targetRow);
+				piece.setColumn(targetColumn);
+			}
+		}
 	}
 	
 	/**
@@ -55,6 +64,12 @@ public class ShisimaGame {
 	 * @return the first not captured piece at the specified location
 	 */
 	private Piece getPieceAtLocation(int row, int column) {
+		for (Piece piece : this.pieces) {
+			if( piece.getRow() == row
+					&& piece.getColumn() == column ){
+				return piece;
+			}
+		}
 		return null;
 	}
 	

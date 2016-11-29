@@ -119,17 +119,20 @@ public class ShisimaGui extends JPanel
 	*/
 	/**
 	 * convert logical position into x,y coordinate
-	 * @param column
 	 * @param row
+	 * @param column
 	 * @return coordinate for position
 	 */
-	public static Coordinates convertToCoordinate(int column, int row){
+	public static Coordinates convertToCoordinate(int row, int column){
 		Coordinates c = null; 
+		
+		System.out.println("row: "+ row + "column:" + column);
+		
 		switch( column ){
 		case Piece.COLUMN_1:
 			switch( row ){
 			case Piece.ROW_1:
-				c = new Coordinates(175,25);
+				c = new Coordinates(69,69);
 				break;
 			case Piece.ROW_2:
 				c = new Coordinates(25,175);
@@ -142,7 +145,7 @@ public class ShisimaGui extends JPanel
 		case Piece.COLUMN_2:
 			switch( row ){
 			case Piece.ROW_1:
-				c = new Coordinates(69,69);
+				c = new Coordinates(175,25);
 				break;
 			case Piece.ROW_2:
 				c = new Coordinates(175,175);
@@ -175,9 +178,27 @@ public class ShisimaGui extends JPanel
 	 * @param c
 	 * @return logical column for coordinate
 	 */
-	public static int convertCoordinatesToColumn(int x, int y){
-		return 0;
+	public int convertCoordinatesToColumn(int x, int y){
+		int PieceSize = 60;		
 		
+		if( x > 25 && x < 25 + PieceSize ){
+			return 1;
+		}
+		else if ( x > 69 && x < 69 + PieceSize){
+			return 1;
+		}
+		else if( x > 175 && x < 175 + PieceSize){
+			return 2;
+		}
+		else if( x > 281 && x < 281 + PieceSize ){
+			return 3;
+		}
+		else if( x > 325 && x < 325 + PieceSize){
+			return 3;
+		}
+		else{
+			return 0;
+		}
 	}
 	
 	/**
@@ -185,8 +206,27 @@ public class ShisimaGui extends JPanel
 	 * @param c
 	 * @return logical row for coordinate
 	 */
-	public static int convertCoodinatesToRow(int x, int y){
-		return 0;
+	public int convertCoodinatesToRow(int x, int y){
+		int PieceSize = 60;		
+		
+		if( y > 25 && y < 25 + PieceSize ){
+			return 1;
+		}
+		else if ( y > 69 && y < 69 + PieceSize){
+			return 1;
+		}
+		else if( y > 175 && y < 175 + PieceSize){
+			return 2;
+		}
+		else if( y > 281 && y < 281 + PieceSize ){
+			return 3;
+		}
+		else if( y > 325 && y < 325 + PieceSize){
+			return 3;
+		}
+		else{
+			return 0;
+		}
 	}
 
 	/**
@@ -198,8 +238,8 @@ public class ShisimaGui extends JPanel
 	 * @param y
 	 */
 	public void setNewPieceLocation(PieceGui dragPiece, int x, int y) {
-		int targetRow = ShisimaGui.convertCoodinatesToRow(x,y);
-		int targetColumn = ShisimaGui.convertCoordinatesToColumn(x,y);
+		int targetRow = this.convertCoodinatesToRow(x,y);
+		int targetColumn = this.convertCoordinatesToColumn(x,y);
 		
 		if( targetRow < Piece.ROW_1 || targetRow > Piece.ROW_3 || targetColumn < Piece.COLUMN_1 || targetColumn > Piece.COLUMN_3){
 			// reset piece position if move is not valid
@@ -211,8 +251,11 @@ public class ShisimaGui extends JPanel
 			this.shisimaGame.movePiece(
 					dragPiece.getPiece().getRow(), dragPiece.getPiece().getColumn()
 					, targetRow, targetColumn);
+			
 			dragPiece.resetToUnderlyingPiecePosition();
+			
 		}
+		
 	}
 
 }

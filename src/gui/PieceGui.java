@@ -44,13 +44,17 @@ public class PieceGui {
 		return img.getHeight(null);
 	}
 	
+	@Override
+	public String toString() {
+		return this.piece+" "+c.x+"/"+c.y;
+	}
 
 	/**
 	 * move the gui piece back to the coordinates that
 	 * correspond with the underlying piece's row and column
 	 */
 	public void resetToUnderlyingPiecePosition() {
-		this.c = ShisimaGui.convertToCoordinate( piece.getColumn(), piece.getRow());
+		this.c = ShisimaGui.convertToCoordinate( piece.getRow(), piece.getColumn());
 	}
 	
 	public Piece getPiece() {

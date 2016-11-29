@@ -15,10 +15,23 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 	private int dragOffsetY;
 	
 
-	public PiecesDragAndDropListener(List<PieceGui> pieces, ShisimaGui shisimaGui) {
-		this.piecesGui = pieces;
+	public PiecesDragAndDropListener(List<PieceGui> piecesGui, ShisimaGui shisimaGui) {
+		this.piecesGui = piecesGui;
 		this.shisimaGui = shisimaGui;
 	}
+	
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+	
+	@Override
+	public void mouseMoved(MouseEvent arg0) {}
 
 	@Override
 	public void mousePressed(MouseEvent evt) {
@@ -66,30 +79,33 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		this.dragPiece = null;
+	public void mouseReleased(MouseEvent evt) {
+		if( this.dragPiece != null){
+			int x = evt.getPoint().x - this.dragOffsetX;
+			int y = evt.getPoint().y - this.dragOffsetY;
+			
+			// set game piece to the new location if possible
+			//
+			shisimaGui.setNewPieceLocation(this.dragPiece, x, y);
+			this.shisimaGui.repaint();
+			this.dragPiece = null;
+		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent evt) {
-		if(this.dragPiece != null){
-			this.dragPiece.setX(evt.getPoint().x - this.dragOffsetX);
-			this.dragPiece.setY(evt.getPoint().y - this.dragOffsetY);
+		if(this.dragPiece != null){				
+			int x = evt.getPoint().x - this.dragOffsetX;
+			int y = evt.getPoint().y - this.dragOffsetY;
+				
+			System.out.println("row:"+shisimaGui.convertCoodinatesToRow(x, y)  
+				+" column:"+shisimaGui.convertCoordinatesToColumn(x, y));
+			
+			this.dragPiece.setX(x);
+			this.dragPiece.setY(y);
+			
 			this.shisimaGui.repaint();
 		}
 		
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {}
-	
-	@Override
-	public void mouseMoved(MouseEvent arg0) {}
-
 }

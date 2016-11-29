@@ -18,6 +18,7 @@ public class ShisimaServer extends JFrame {
 		// create application frame and set visible
 		layout = new FlowLayout();
 		this.setLayout(layout);
+		this.setTitle("Shisima Game Server");
 		
 		
 		NetworkService network = new NetworkService(5000);

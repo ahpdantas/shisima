@@ -12,15 +12,15 @@ public class Piece {
 	//and eight columns (called files and denoted with letters a to h) of squares.
 	private int row;
 	
-	public static final int ROW_1 = 0;
-	public static final int ROW_2 = 1;
-	public static final int ROW_3 = 2;
+	public static final int ROW_1 = 1;
+	public static final int ROW_2 = 2;
+	public static final int ROW_3 = 3;
 		
 	private int column;
 	
-	public static final int COLUMN_1 = 0;
-	public static final int COLUMN_2 = 1;
-	public static final int COLUMN_3 = 2;
+	public static final int COLUMN_1 = 1;
+	public static final int COLUMN_2 = 2;
+	public static final int COLUMN_3 = 3;
 	
 	
 	public Piece(int type, int row, int column) {
