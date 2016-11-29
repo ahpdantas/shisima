@@ -1,8 +1,10 @@
 package net;
 
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.DataInputStream;
 
 public class Client extends Thread implements NetworkInterface{
@@ -11,18 +13,18 @@ public class Client extends Thread implements NetworkInterface{
 	private DataOutputStream os;
 	private DataInputStream is;
 	
-	public Client(String host, int port){
+	public Client(String host, int port) throws java.net.ConnectException, UnknownHostException, IOException {
+		
+		clientSocket = new Socket(host, port);
+				
 		try{
-			clientSocket = new Socket(host, port);
-			System.out.println("Connected");
 			os = new DataOutputStream(clientSocket.getOutputStream());
 			is = new DataInputStream(clientSocket.getInputStream());
-			
 			this.start();
-			
-		}catch(Exception e){
-			System.out.println(e);
+		}catch( Exception e){
+			e.printStackTrace();
 		}
+
 	}
 	
 	public void send(String msg){

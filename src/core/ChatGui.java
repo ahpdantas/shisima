@@ -101,7 +101,7 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Chat
 	
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(250, 400);
+        return new Dimension(200, 400);
     }
     
     @Override
