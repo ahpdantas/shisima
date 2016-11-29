@@ -2,8 +2,8 @@ package listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
 
 import app.ShisimaApp;
 import core.ChatGui;
@@ -19,6 +19,12 @@ public class NewListener implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e){
+		
+		if( app.network != null || app.chat != null || app.shisima != null ){
+			JOptionPane.showMessageDialog(null, "There is a empty game running!!!");
+			return;
+		}
+		
 		try{
 			app.network = new NetworkService(app.getIpAddress(),app.getPort());
 		}catch(java.net.ConnectException ex){
@@ -27,11 +33,16 @@ public class NewListener implements ActionListener{
 			e1.printStackTrace();
 		}
 		
-		app.chat = new ChatGui(app.network);
-		app.shisima = new ShisimaGui();
+		app.restartSubMenu.addActionListener(new RestartListener(app));
+		app.exitSubMenu.addActionListener(new ExitListener(app));
+		
+		
+		app.chat = new ChatGui(app.getUserName(),app.network);
+		app.shisima = new ShisimaGui(app.network);
 		
 		app.add(app.chat);
 		app.add(app.shisima);
+		
 		app.pack();
 		
 	}

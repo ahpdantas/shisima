@@ -11,10 +11,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import logic.ShisimaGame;
+import net.NetworkService;
+import net.ReceiverListener;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel
+public class ShisimaGui extends JPanel implements ReceiverListener
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
@@ -25,13 +27,14 @@ public class ShisimaGui extends JPanel
 
 	private List<PieceGui> piecesGui = new ArrayList<PieceGui>();
 	
-	public ShisimaGui(){
+	public ShisimaGui(NetworkService network){
 		//background
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
+		network.addReceiverListener(this);
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
 		
 		// create chess game
-		this.shisimaGame = new ShisimaGame();
+		this.shisimaGame = new ShisimaGame(network);
 		
 		//wrap game pieces into their graphical representation
 		for (Piece piece : this.shisimaGame.getPieces()) {
@@ -104,7 +107,6 @@ public class ShisimaGui extends JPanel
 	 */
 	public void changeGameState() {
 		this.shisimaGame.changeGameState();
-		//this.lblGameState.setText(this.getGameStateAsText());
 	}
 
 	/**
@@ -112,6 +114,10 @@ public class ShisimaGui extends JPanel
 	 */
 	public int getGameState() {
 		return this.shisimaGame.getGameState();
+	}
+	
+	public int getPlayer(){
+		return this.shisimaGame.getPlayer();
 	}
 	
 	
@@ -247,13 +253,38 @@ public class ShisimaGui extends JPanel
 			//change model and update gui piece afterwards
 			System.out.println("moving piece to "+targetRow+"/"+targetColumn);
 			this.shisimaGame.movePiece(
-					dragPiece.getPiece().getRow(), dragPiece.getPiece().getColumn()
-					, targetRow, targetColumn);
-			
-			dragPiece.resetToUnderlyingPiecePosition();
+					dragPiece.getPiece().getRow(),
+					dragPiece.getPiece().getColumn(),
+					targetRow, 
+					targetColumn);
 
+			dragPiece.resetToUnderlyingPiecePosition();
 		}
 		
+	}
+	
+	@Override
+	public void receive(String message) {
+		String[] msg = message.split(":");
+				
+		if( msg.length >= 3 && !msg[2].isEmpty() ){
+			String[] s = msg[2].split(",");
+			
+			for( PieceGui p: piecesGui){
+				if ( p.getPiece().getId() == Integer.valueOf(s[0]) ){
+					this.shisimaGame.movePiece(
+							p.getPiece().getRow(),
+							p.getPiece().getColumn(),
+							Integer.valueOf(s[1]),
+							Integer.valueOf(s[2]));
+					p.resetToUnderlyingPiecePosition();
+					this.changeGameState();
+					this.repaint();
+									
+				}
+			}
+		}
+	
 	}
 
 }

@@ -1,25 +1,42 @@
 package logic;
 
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 import logic.Piece;
+import net.NetworkService;
+import net.ShisimaPacket;
 
-public class ShisimaGame {
+public class ShisimaGame  {
 	private int gameState = GAME_STATE_PLAYER_1;
+	private int player = PLAYER_1;
+	private NetworkService network;
+	
 	public static final int GAME_STATE_PLAYER_1 = 0;
 	public static final int GAME_STATE_PLAYER_2 = 1;
 	
+	public static final int PLAYER_1 = 1;
+	public static final int PLAYER_2 = 2;
+	
 	private List<Piece> pieces = new ArrayList<Piece>();
 	
-	public ShisimaGame(){
+	public ShisimaGame(NetworkService network){
 
-		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_1);
-		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_2);
-		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.ROW_1, Piece.COLUMN_3);
+		this.network = network;
 		
-		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_1);
-		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_2);
-		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.ROW_3, Piece.COLUMN_3);
+		if( this.network.type == net.NetworkService.SERVER_TYPE ){
+			this.player = PLAYER_1;
+		} else if( this.network.type == net.NetworkService.CLIENT_TYPE ){
+			this.player = PLAYER_2;
+		}
+		
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_1, Piece.ROW_1, Piece.COLUMN_1);
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_2, Piece.ROW_1, Piece.COLUMN_2);
+		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_3, Piece.ROW_1, Piece.COLUMN_3);
+		
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_1, Piece.ROW_3, Piece.COLUMN_1);
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_2, Piece.ROW_3, Piece.COLUMN_2);
+		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_3, Piece.ROW_3, Piece.COLUMN_3);
 		
 	}
 	
@@ -30,8 +47,8 @@ public class ShisimaGame {
 	 * @param row on of Pieces.ROW_..
 	 * @param column on of Pieces.COLUMN_..
 	 */
-	private void createAndAddPiece(int player, int row, int column) {
-		Piece piece = new Piece(player, row, column);
+	private void createAndAddPiece(int player, int id, int row, int column) {
+		Piece piece = new Piece(player, id, row, column);
 		this.pieces.add(piece);
 	}
 	
@@ -55,6 +72,7 @@ public class ShisimaGame {
 				piece.setRow(targetRow);
 				piece.setColumn(targetColumn);
 				this.changeGameState();
+				this.sendGameStatus(piece.getId(), targetRow, targetColumn);
 			}
 		}
 	}
@@ -90,6 +108,14 @@ public class ShisimaGame {
 		return this.gameState;
 	}
 	
+	public int getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(int player) {
+		this.player = player;
+	}
+	
 	/**
 	 * switches the game state from ChessGame.GAME_STATE_PLAYER_1 to
 	 * ChessGame.GAME_STATE_PLAYER_2 and vice versa.
@@ -104,6 +130,16 @@ public class ShisimaGame {
 				break;
 			default:
 				throw new IllegalStateException("unknown game state:" + this.gameState);
+		}
+	}
+	
+	public void sendGameStatus(int pieceId, int row, int column){
+		ShisimaPacket pack = new ShisimaPacket("","",pieceId+","+row+","+column,"");
+		try{
+			System.out.println("Sending packet");
+			this.network.send(pack);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 

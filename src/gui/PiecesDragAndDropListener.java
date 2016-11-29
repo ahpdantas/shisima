@@ -53,10 +53,12 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 				// position
 				//
 				if( (	this.shisimaGui.getGameState() == ShisimaGame.GAME_STATE_PLAYER_1
-						&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_1
+						&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_1 
+						&& this.shisimaGui.getPlayer() == ShisimaGame.PLAYER_1 
 					) ||
 					(	this.shisimaGui.getGameState() == ShisimaGame.GAME_STATE_PLAYER_2
 							&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_2
+							&& this.shisimaGui.getPlayer() == ShisimaGame.PLAYER_2 
 						)
 					){
 						this.dragOffsetX = x - piece.getX();

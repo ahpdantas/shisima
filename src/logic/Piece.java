@@ -5,8 +5,14 @@ public class Piece {
 	public static final int TYPE_PLAYER_1 = 1;
 	public static final int TYPE_PLAYER_2 = 2;
 	
+	public static final int PIECE_1 = 1;
+	public static final int PIECE_2 = 2;
+	public static final int PIECE_3 = 3;
+	
+	
 	private int type;
-
+	private int id;
+	
 	//Chess is played on a square board of
 	//eight rows (called ranks and denoted with numbers 1 to 8)
 	//and eight columns (called files and denoted with letters a to h) of squares.
@@ -23,10 +29,11 @@ public class Piece {
 	public static final int COLUMN_3 = 3;
 	
 	
-	public Piece(int type, int row, int column) {
+	public Piece(int type, int id, int row, int column) {
 		this.row = row;
 		this.column = column;
 		this.type = type;
+		this.id = id;
 	}
 
 	public int getRow() {
@@ -62,6 +69,10 @@ public class Piece {
 
 	public int getType() {
 		return this.type;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 	
 	public static String getRowString(int row){

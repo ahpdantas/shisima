@@ -23,6 +23,7 @@ public class UserNameListener implements ActionListener {
 		Object[] texts = {message, username};
 		JOptionPane.showMessageDialog(null,texts);
 		shisima.setUserName(username.getText());
+		shisima.chat.setUsername(shisima.getUserName());
 	}
 
 }

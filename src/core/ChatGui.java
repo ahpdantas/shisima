@@ -3,47 +3,41 @@ package core;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import net.ChatReceiveListener;
+import logic.Chat;
 import net.NetworkService;
+import net.ReceiverListener;
 
-public class ChatGui extends JPanel implements ActionListener, KeyListener, ChatReceiveListener {
-	/**
-	 * 
-	 */
+public class ChatGui extends JPanel implements ActionListener, KeyListener, ReceiverListener {
 	private static final long serialVersionUID = 1L;
 	private LayoutManager layout;
 	private JTextArea messageLog;
 	private JTextField message;
 	private JButton btnSend;
-	private JButton btnExit;
-	private NetworkService network;
-	
-	public ChatGui(NetworkService network){
+	private Chat chat;
+
+	public ChatGui(String userName, NetworkService network){
      
 		layout = new BorderLayout();
 		this.setLayout(layout);
 		
-		this.network = network;
-		network.addChatListener(this);
+		this.chat = new Chat(userName,network);
+		network.addReceiverListener(this);
 		
 	    messageLog = new JTextArea(15,10);
 	    messageLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
@@ -61,10 +55,6 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Chat
 	    btnSend.addActionListener(this);
 	    btnSend.addKeyListener(this);
 	    
-	    btnExit = new JButton("Exit");
-	    btnExit.setToolTipText("Exit Chat");
-	    btnExit.addActionListener(this);
-	    
 	    JScrollPane scroll = new JScrollPane(messageLog);
 	    messageLog.setLineWrap(true);  
 		
@@ -78,27 +68,31 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Chat
 		this.add(ChatPanel, BorderLayout.CENTER);
 		
 		JPanel buttonsPanel = new JPanel(new GridLayout());
-		buttonsPanel.add(btnExit);
 		buttonsPanel.add(btnSend);
 		
 		this.add(buttonsPanel, BorderLayout.SOUTH);
 		this.setBackground(Color.LIGHT_GRAY);
 		
 	}
-	public void SendMessage(String msg) throws IOException{
-		network.sendChatMessage(msg);
+	
+	public void setUsername(String userName){
+		this.chat.setUserName(userName);
 	}
 	
-	
-	public void Exit(){
-		
+	public void updateMessageLog(String message){
+		messageLog.append(message + "\r\n");
 	}
 	
 	@Override
-	public void receiveMsg(String message) {
-		messageLog.append(message);
+	public void receive(String message) {
+		
+		String[] msg = message.split(":");
+		System.out.println(message);
+		if( msg.length >= 2 && !msg[0].isEmpty() && !msg[1].isEmpty( ) ){
+			messageLog.append(msg[0] + " said: "+ msg[1] + "\r\n");
+		}
 	}
-	
+			
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(200, 400);
@@ -106,29 +100,17 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Chat
     
     @Override
     public void actionPerformed(ActionEvent e) {
-             
-      try {
-         if(e.getActionCommand().equals(btnSend.getActionCommand())){
-        	 SendMessage(message.getText()); 
-         } else if(e.getActionCommand().equals(btnExit.getActionCommand())){
-        	 Exit(); 
-         }
-      } catch (IOException e1) {
-    	  // TODO Auto-generated catch block
-          e1.printStackTrace();
-      }                       
+    	chat.SendMessage(message.getText()); 
+    	updateMessageLog(message.getText());
     }
 
 	@Override
 	public void keyPressed(KeyEvent key) {
-		
 		if(key.getKeyCode() == KeyEvent.VK_ENTER){
-			try {
-				SendMessage(message.getText());
-			} catch (IOException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
-			}                                                          
+			chat.SendMessage(message.getText());
+			updateMessageLog(message.getText());
+			JTextField field = (JTextField)key.getSource();
+			field.setText("");
 	   }                     
 	}
 
@@ -143,6 +125,5 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Chat
 		// TODO Auto-generated method stub
 		
 	}
-	
 	
 }

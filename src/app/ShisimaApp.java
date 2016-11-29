@@ -3,17 +3,13 @@ package app;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.awt.event.KeyEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import core.ChatGui;
@@ -22,12 +18,16 @@ import listeners.ExitListener;
 import listeners.IpAddressListener;
 import listeners.NewListener;
 import listeners.PortListener;
+import listeners.RestartListener;
 import listeners.UserNameListener;
 import net.NetworkService;
 
 public class ShisimaApp extends JFrame {
+	
 	private static final long serialVersionUID = 1L;
 	private String userName = "user";
+	
+
 	private String ipAddress = "127.0.0.1";
 	private int port = 5000;
 	private LayoutManager layout;
@@ -36,6 +36,8 @@ public class ShisimaApp extends JFrame {
 	public ChatGui chat;
 	public ShisimaGui shisima;
 	
+	public JMenuItem restartSubMenu;
+	public JMenuItem exitSubMenu;
 	
 	public ShisimaApp(){
 		// create application frame and set visible
@@ -73,13 +75,22 @@ public class ShisimaApp extends JFrame {
 		menuItem.getAccessibleContext().setAccessibleDescription("Start New Game");
 		menuItem.addActionListener(new NewListener(this)); 
 		menu.add(menuItem);
+		
+		menu.addSeparator();
 
+		this.restartSubMenu = new JMenuItem("Restart",KeyEvent.VK_N);
+		this.restartSubMenu.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		this.restartSubMenu.getAccessibleContext().setAccessibleDescription("Restart the Game");
+		 
+		menu.add(this.restartSubMenu);
+		
 		menu.addSeparator();
 		
-		menuItem = new JMenuItem("Exit");
-		menuItem.setMnemonic(KeyEvent.VK_B);
-		menuItem.addActionListener(new ExitListener(this));
-		menu.add(menuItem);
+		this.exitSubMenu = new JMenuItem("Exit");
+		this.exitSubMenu.setMnemonic(KeyEvent.VK_B);
+		
+		menu.add(this.exitSubMenu);
 		
 		//Build second menu in the menu bar.
 		menu = new JMenu("Configure");
@@ -133,8 +144,8 @@ public class ShisimaApp extends JFrame {
 		this.port = port;
 	}
 	
-	
 	public static void main(String[] args) {
 		new ShisimaApp();
 	}
+
 }

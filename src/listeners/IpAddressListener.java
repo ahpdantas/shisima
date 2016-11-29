@@ -24,5 +24,4 @@ public class IpAddressListener implements ActionListener {
 		JOptionPane.showMessageDialog(null,texts);
 		shisima.setIpAddress(address.getText());
 	}
-
 }
