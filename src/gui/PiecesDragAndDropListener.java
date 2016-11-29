@@ -52,6 +52,10 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 				// to jump with it's upper left corner to the current mouse
 				// position
 				//
+				System.out.println("GameState:"+this.shisimaGui.getGameState());
+				System.out.println("Type:"+piece.getPiece().getType());
+				System.out.println("Player:"+this.shisimaGui.getPlayer());
+				
 				if( (	this.shisimaGui.getGameState() == ShisimaGame.GAME_STATE_PLAYER_1
 						&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_1 
 						&& this.shisimaGui.getPlayer() == ShisimaGame.PLAYER_1 

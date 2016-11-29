@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import logic.ShisimaGame;
@@ -232,6 +233,17 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 			return 0;
 		}
 	}
+	
+	void detectWinner(){
+		int winner = this.shisimaGame.getWinner();
+		if( winner == ShisimaGame.NO_WINNER ){
+			JOptionPane.showMessageDialog(null, "There is no Winner in this game!!!");
+		} else if( winner == this.shisimaGame.getPlayer() ){
+			JOptionPane.showMessageDialog(null, "You win!!!");
+		} else if( winner != ShisimaGame.UNKNOWN ){
+			JOptionPane.showMessageDialog(null, "You loose!!!");
+		}
+	}
 
 	/**
 	 * change location of given piece, if the location is valid.
@@ -259,6 +271,7 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 					targetColumn);
 
 			dragPiece.resetToUnderlyingPiecePosition();
+			detectWinner();
 		}
 		
 	}
@@ -270,21 +283,20 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 		if( msg.length >= 3 && !msg[2].isEmpty() ){
 			String[] s = msg[2].split(",");
 			
+			System.out.println("Receiving packet");
+			System.out.println("Player: "+this.getPlayer());
+			
 			for( PieceGui p: piecesGui){
-				if ( p.getPiece().getId() == Integer.valueOf(s[0]) ){
-					this.shisimaGame.movePiece(
-							p.getPiece().getRow(),
-							p.getPiece().getColumn(),
-							Integer.valueOf(s[1]),
-							Integer.valueOf(s[2]));
+				if ( p.getPiece().getId() == Integer.valueOf(s[0])
+						&& p.getPiece().getType() != this.getPlayer() ){
+					p.getPiece().setRowColumn(Integer.valueOf(s[1]), Integer.valueOf(s[2]));
 					p.resetToUnderlyingPiecePosition();
 					this.changeGameState();
+					detectWinner();
 					this.repaint();
 									
 				}
 			}
 		}
-	
 	}
-
 }

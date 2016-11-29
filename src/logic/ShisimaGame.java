@@ -3,6 +3,8 @@ package logic;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
+
+import gui.Coordinates;
 import logic.Piece;
 import net.NetworkService;
 import net.ShisimaPacket;
@@ -10,13 +12,16 @@ import net.ShisimaPacket;
 public class ShisimaGame  {
 	private int gameState = GAME_STATE_PLAYER_1;
 	private int player = PLAYER_1;
+	private int winner = UNKNOWN;
 	private NetworkService network;
 	
 	public static final int GAME_STATE_PLAYER_1 = 0;
 	public static final int GAME_STATE_PLAYER_2 = 1;
 	
+	public static final int UNKNOWN = 0;
 	public static final int PLAYER_1 = 1;
 	public static final int PLAYER_2 = 2;
+	public static final int NO_WINNER = 3;
 	
 	private List<Piece> pieces = new ArrayList<Piece>();
 	
@@ -69,13 +74,126 @@ public class ShisimaGame  {
 					((targetColumn == sourceColumn )&&( Math.abs(targetRow- sourceRow) <= 1 ))||
 					( targetColumn == Piece.COLUMN_2)&&(targetRow == Piece.ROW_2)||
 					( sourceColumn == Piece.COLUMN_2)&&(sourceRow == Piece.ROW_2)){
-				piece.setRow(targetRow);
-				piece.setColumn(targetColumn);
+				piece.setRowColumn(targetRow, targetColumn);
 				this.changeGameState();
 				this.sendGameStatus(piece.getId(), targetRow, targetColumn);
 			}
 		}
 	}
+	
+	public Boolean tieCondition(List<Coordinates> coordinates){
+		int[] numberOfOcurrences;
+		
+		numberOfOcurrences = new int[9];
+		
+		for( Coordinates c: coordinates ){
+			switch( c.x ){
+			case Piece.ROW_1:
+				switch(c.y){
+				case Piece.COLUMN_1:
+					numberOfOcurrences[0]++;
+					break;
+				case Piece.COLUMN_2:
+					numberOfOcurrences[1]++;
+					break;
+				case Piece.COLUMN_3:
+					numberOfOcurrences[2]++;
+					break;
+				}
+				break;
+			case Piece.ROW_2:
+				switch(c.y){
+				case Piece.COLUMN_1:
+					numberOfOcurrences[3]++;
+					break;
+				case Piece.COLUMN_2:
+					numberOfOcurrences[4]++;
+					break;
+				case Piece.COLUMN_3:
+					numberOfOcurrences[5]++;
+					break;
+				}
+				break;
+			case Piece.ROW_3:
+				switch(c.y){
+				case Piece.COLUMN_1:
+					numberOfOcurrences[6]++;
+					break;
+				case Piece.COLUMN_2:
+					numberOfOcurrences[7]++;
+					break;
+				case Piece.COLUMN_3:
+					numberOfOcurrences[8]++;
+					break;
+				}
+				break;
+			}
+		}
+		
+		for( int c : numberOfOcurrences ){
+			if( c >= 3 ){
+				this.setWinner(NO_WINNER);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void detectWinner(){
+		Piece piece = getPieceAtLocation(Piece.ROW_2, Piece.COLUMN_2);
+		Piece piece2;
+		Piece piece3;
+		
+		for (Piece p : this.pieces) {
+			if( tieCondition(p.getMoves()) ){
+				return;
+			}
+		}
+		
+		if( piece != null ){
+			piece2 = getPieceAtLocation(Piece.ROW_1, Piece.COLUMN_1 );
+			if( piece2 != null && piece2.getType() == piece.getType() ){
+				piece3 = getPieceAtLocation(Piece.ROW_3, Piece.COLUMN_3 );
+				if( piece3 != null && piece3.getType() == piece2.getType() ){
+					System.out.println("Player "+piece3.getType() +"Wins");
+					this.setWinner(piece3.getType());
+					return;
+				}
+			}
+			
+			piece2 = getPieceAtLocation(Piece.ROW_1, Piece.COLUMN_2 );
+			if( piece2 != null && piece2.getType() == piece.getType() ){
+				piece3 = getPieceAtLocation(Piece.ROW_3, Piece.COLUMN_2 );
+				if( piece3 != null && piece3.getType() == piece2.getType() ){
+					System.out.println("Player "+piece3.getType() +"Wins");
+					this.setWinner(piece3.getType());
+					return;
+				}
+			}
+			
+			piece2 = getPieceAtLocation(Piece.ROW_2, Piece.COLUMN_1 );
+			if( piece2 != null && piece2.getType() == piece.getType() ){
+				piece3 = getPieceAtLocation(Piece.ROW_2, Piece.COLUMN_3 );
+				if( piece3 != null && piece3.getType() == piece2.getType() ){
+					System.out.println("Player "+piece3.getType() +"Wins");
+					this.setWinner(piece3.getType());
+					return;
+				}
+			}
+			
+			piece2 = getPieceAtLocation(Piece.ROW_3, Piece.COLUMN_1 );
+			if( piece2 != null && piece2.getType() == piece.getType() ){
+				piece3 = getPieceAtLocation(Piece.ROW_1, Piece.COLUMN_3 );
+				if( piece3 != null && piece3.getType() == piece2.getType() ){
+					System.out.println("Player "+piece3.getType() +"Wins");
+					this.setWinner(piece3.getType());
+					return;
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * returns the first piece at the specified location that is not marked
@@ -101,6 +219,7 @@ public class ShisimaGame  {
 		return this.pieces;
 	}
 	
+
 	/**
 	 * @return current game state (one of ChessGame.GAME_STATE_..)
 	 */
@@ -121,6 +240,7 @@ public class ShisimaGame  {
 	 * ChessGame.GAME_STATE_PLAYER_2 and vice versa.
 	 */
 	public void changeGameState() {
+		
 		switch (this.gameState) {
 			case GAME_STATE_PLAYER_1:
 				this.gameState = GAME_STATE_PLAYER_2;
@@ -131,6 +251,9 @@ public class ShisimaGame  {
 			default:
 				throw new IllegalStateException("unknown game state:" + this.gameState);
 		}
+		System.out.println("Changing GameState:"+ this.gameState);
+		
+		this.detectWinner();
 	}
 	
 	public void sendGameStatus(int pieceId, int row, int column){
@@ -141,6 +264,14 @@ public class ShisimaGame  {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	public int getWinner() {
+		return winner;
+	}
+
+	public void setWinner(int winner) {
+		this.winner = winner;
 	}
 
 }

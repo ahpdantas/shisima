@@ -1,7 +1,13 @@
 package logic;
 
-public class Piece {
+import java.util.ArrayList;
+import java.util.List;
 
+import gui.Coordinates;
+
+public class Piece {
+	private List<Coordinates> moves = new ArrayList<Coordinates>();
+	
 	public static final int TYPE_PLAYER_1 = 1;
 	public static final int TYPE_PLAYER_2 = 2;
 	
@@ -43,13 +49,16 @@ public class Piece {
 	public int getColumn() {
 		return column;
 	}
-
-	public void setRow(int row) {
+	
+	public void setRowColumn( int row, int column){
 		this.row = row;
-	}
-
-	public void setColumn(int column) {
 		this.column = column;
+		this.moves.add(new Coordinates(row, column));
+		
+	}
+	
+	public List<Coordinates> getMoves() {
+		return moves;
 	}
 
 	@Override
