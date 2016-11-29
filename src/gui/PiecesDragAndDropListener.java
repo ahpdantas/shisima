@@ -5,6 +5,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
+import logic.ShisimaGame;
+
 public class PiecesDragAndDropListener implements MouseListener, MouseMotionListener {
 
 	private List<PieceGui> piecesGui;
@@ -50,9 +52,17 @@ public class PiecesDragAndDropListener implements MouseListener, MouseMotionList
 				// to jump with it's upper left corner to the current mouse
 				// position
 				//
-				this.dragOffsetX = x - piece.getX();
-				this.dragOffsetY = y - piece.getY();
-				this.dragPiece = piece;
+				if( (	this.shisimaGui.getGameState() == ShisimaGame.GAME_STATE_PLAYER_1
+						&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_1
+					) ||
+					(	this.shisimaGui.getGameState() == ShisimaGame.GAME_STATE_PLAYER_2
+							&& piece.getPiece().getType() == logic.Piece.TYPE_PLAYER_2
+						)
+					){
+						this.dragOffsetX = x - piece.getX();
+						this.dragOffsetY = y - piece.getY();
+						this.dragPiece = piece;
+				}
 				break;
 			}
 		}

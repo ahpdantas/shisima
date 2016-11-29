@@ -102,21 +102,19 @@ public class ShisimaGui extends JPanel
 	/**
 	 * switches between the different game states 
 	 */
-	/*public void changeGameState() {
-		this.chessGame.changeGameState();
-		this.lblGameState.setText(this.getGameStateAsText());
-	}*/
+	public void changeGameState() {
+		this.shisimaGame.changeGameState();
+		//this.lblGameState.setText(this.getGameStateAsText());
+	}
 
 	/**
 	 * @return current game state
 	 */
-/*	public int getGameState() {
-		return this.chessGame.getGameState();
+	public int getGameState() {
+		return this.shisimaGame.getGameState();
 	}
 	
 	
-	
-	*/
 	/**
 	 * convert logical position into x,y coordinate
 	 * @param row
@@ -253,7 +251,7 @@ public class ShisimaGui extends JPanel
 					, targetRow, targetColumn);
 			
 			dragPiece.resetToUnderlyingPiecePosition();
-			
+
 		}
 		
 	}

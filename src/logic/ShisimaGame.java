@@ -1,13 +1,14 @@
 package logic;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
-
 import logic.Piece;
-import gui.PieceGui;
 
 public class ShisimaGame {
+	private int gameState = GAME_STATE_PLAYER_1;
+	public static final int GAME_STATE_PLAYER_1 = 0;
+	public static final int GAME_STATE_PLAYER_2 = 1;
+	
 	private List<Piece> pieces = new ArrayList<Piece>();
 	
 	public ShisimaGame(){
@@ -49,9 +50,11 @@ public class ShisimaGame {
 		if( targetPiece == null ){
 			if( ((targetRow == sourceRow )&&( Math.abs(targetColumn- sourceColumn) <= 1 ))||
 					((targetColumn == sourceColumn )&&( Math.abs(targetRow- sourceRow) <= 1 ))||
-					( targetColumn == Piece.COLUMN_2)&&(targetRow == Piece.ROW_2)){
+					( targetColumn == Piece.COLUMN_2)&&(targetRow == Piece.ROW_2)||
+					( sourceColumn == Piece.COLUMN_2)&&(sourceRow == Piece.ROW_2)){
 				piece.setRow(targetRow);
 				piece.setColumn(targetColumn);
+				this.changeGameState();
 			}
 		}
 	}
@@ -78,6 +81,30 @@ public class ShisimaGame {
 	 */
 	public List<Piece> getPieces() {
 		return this.pieces;
+	}
+	
+	/**
+	 * @return current game state (one of ChessGame.GAME_STATE_..)
+	 */
+	public int getGameState() {
+		return this.gameState;
+	}
+	
+	/**
+	 * switches the game state from ChessGame.GAME_STATE_PLAYER_1 to
+	 * ChessGame.GAME_STATE_PLAYER_2 and vice versa.
+	 */
+	public void changeGameState() {
+		switch (this.gameState) {
+			case GAME_STATE_PLAYER_1:
+				this.gameState = GAME_STATE_PLAYER_2;
+				break;
+			case GAME_STATE_PLAYER_2:
+				this.gameState = GAME_STATE_PLAYER_1;
+				break;
+			default:
+				throw new IllegalStateException("unknown game state:" + this.gameState);
+		}
 	}
 
 }

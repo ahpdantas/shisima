@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import net.ChatReceiveListener;
 import net.NetworkService;
 
-public class ChatService extends JPanel implements ActionListener, KeyListener, ChatReceiveListener {
+public class ChatGui extends JPanel implements ActionListener, KeyListener, ChatReceiveListener {
 	/**
 	 * 
 	 */
@@ -37,7 +37,7 @@ public class ChatService extends JPanel implements ActionListener, KeyListener, 
 	private JButton btnExit;
 	private NetworkService network;
 	
-	public ChatService(NetworkService network){
+	public ChatGui(NetworkService network){
      
 		layout = new BorderLayout();
 		this.setLayout(layout);

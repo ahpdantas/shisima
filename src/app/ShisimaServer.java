@@ -5,7 +5,7 @@ import java.awt.LayoutManager;
 
 import javax.swing.JFrame;
 
-import core.ChatService;
+import core.ChatGui;
 import gui.ShisimaGui;
 import net.NetworkService;
 
@@ -22,7 +22,7 @@ public class ShisimaServer extends JFrame {
 		
 		
 		NetworkService network = new NetworkService(5000);
-		ChatService chat = new ChatService(network);
+		ChatGui chat = new ChatGui(network);
 				
 		ShisimaGui shisima = new ShisimaGui();
 		
@@ -32,7 +32,7 @@ public class ShisimaServer extends JFrame {
 		this.pack();
 		
 	    this.setVisible(true);
-	    this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
 	
