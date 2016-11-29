@@ -80,7 +80,7 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Rece
 	}
 	
 	public void updateMessageLog(String message){
-		messageLog.append(message + "\r\n");
+		messageLog.append( "You said: "+ message + "\r\n");
 	}
 	
 	@Override
