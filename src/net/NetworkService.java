@@ -27,6 +27,13 @@ public class NetworkService {
 	
 	public void addReceiverListener(ReceiverListener r){
 		net.addReceiverListener(r);
-	} 
+	}
+	
+	public void addConnectionStatusChangeListener(ConnectionStatusChangeListener c){
+		System.out.println("Adding statusListener to "+this.type);
+		net.addConnectionStatusChangeListener(c);
+	}
+	
+	
 
 }

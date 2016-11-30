@@ -3,7 +3,7 @@ package logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.Coordinates;
+import utils.Coordinates;
 
 public class Piece {
 	private List<Coordinates> moves = new ArrayList<Coordinates>();

@@ -1,10 +1,12 @@
-package gui;
+package listeners;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
+import gui.PieceGui;
+import gui.ShisimaGui;
 import logic.ShisimaGame;
 
 public class PiecesDragAndDropListener implements MouseListener, MouseMotionListener {

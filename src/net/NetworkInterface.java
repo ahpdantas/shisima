@@ -5,8 +5,10 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 
 public class NetworkInterface extends Thread{
-	private ArrayList<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
+	public ArrayList<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
+	public ArrayList<ConnectionStatusChangeListener> statusListeners = new ArrayList<ConnectionStatusChangeListener>();
 
+	public boolean connected = false;
 	public int port;
 	public DataInputStream is;
 	public DataOutputStream os;
@@ -23,6 +25,10 @@ public class NetworkInterface extends Thread{
 	
 	public void addReceiverListener(ReceiverListener r){
 		this.receiverListeners.add(r);
+	}
+	
+	public void addConnectionStatusChangeListener( ConnectionStatusChangeListener c){
+		this.statusListeners.add(c);
 	}
 	
 	public void run(){

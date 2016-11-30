@@ -12,13 +12,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import core.ChatGui;
+import gui.ChatGui;
 import gui.ShisimaGui;
-import listeners.ExitListener;
 import listeners.IpAddressListener;
 import listeners.NewListener;
 import listeners.PortListener;
-import listeners.RestartListener;
 import listeners.UserNameListener;
 import net.NetworkService;
 
@@ -71,24 +69,24 @@ public class ShisimaApp extends JFrame {
 		//a group of JMenuItems
 		menuItem = new JMenuItem("New",KeyEvent.VK_N);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(
-		        KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		        KeyEvent.VK_N, ActionEvent.ALT_MASK));
 		menuItem.getAccessibleContext().setAccessibleDescription("Start New Game");
 		menuItem.addActionListener(new NewListener(this)); 
 		menu.add(menuItem);
 		
 		menu.addSeparator();
 
-		this.restartSubMenu = new JMenuItem("Restart",KeyEvent.VK_N);
+		this.restartSubMenu = new JMenuItem("Restart",KeyEvent.VK_R);
 		this.restartSubMenu.setAccelerator(KeyStroke.getKeyStroke(
-		        KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		        KeyEvent.VK_R, ActionEvent.ALT_MASK));
 		this.restartSubMenu.getAccessibleContext().setAccessibleDescription("Restart the Game");
 		 
 		menu.add(this.restartSubMenu);
 		
 		menu.addSeparator();
 		
-		this.exitSubMenu = new JMenuItem("Exit");
-		this.exitSubMenu.setMnemonic(KeyEvent.VK_B);
+		this.exitSubMenu = new JMenuItem("Exit",KeyEvent.VK_X);
+		this.exitSubMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));	
 		
 		menu.add(this.exitSubMenu);
 		
@@ -106,12 +104,13 @@ public class ShisimaApp extends JFrame {
 		menu.addSeparator();
 		
 		submenu = new JMenu("Network Settings");
+		submenu.setMnemonic(KeyEvent.VK_S);
 		
-		menuItem = new JMenuItem("I.P Address");
+		menuItem = new JMenuItem("I.P Address",KeyEvent.VK_I);
 		menuItem.addActionListener(new IpAddressListener(this) ); 
 		submenu.add(menuItem);
 
-		menuItem = new JMenuItem("Port");
+		menuItem = new JMenuItem("Port",KeyEvent.VK_P);
 		menuItem.addActionListener(new PortListener(this));
 		submenu.add(menuItem);
 		menu.add(submenu);

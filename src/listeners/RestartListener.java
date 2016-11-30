@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import app.ShisimaApp;
-import core.ChatGui;
+import gui.ChatGui;
 import gui.ShisimaGui;
 import net.ReceiverListener;
 import net.ShisimaPacket;

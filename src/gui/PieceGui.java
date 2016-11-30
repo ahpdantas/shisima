@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Image;
 import logic.Piece;
+import utils.Coordinates;
 
 public class PieceGui {
 	

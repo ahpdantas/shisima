@@ -11,13 +11,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
+import net.ConnectionStatusChangeListener;
 import net.NetworkService;
 import net.ReceiverListener;
+import utils.Coordinates;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel implements ReceiverListener
+public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionStatusChangeListener
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
@@ -32,6 +35,8 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 		//background
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
 		network.addReceiverListener(this);
+		network.addConnectionStatusChangeListener(this);
+		
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
 		
 		// create chess game
@@ -311,5 +316,13 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 			
 			detectWinner();
 		}
+	}
+
+	@Override
+	public void ConnectionStatusChange(boolean connected) {
+		System.out.println("Change in the status of connection");
+		if( connected ){
+			this.changeGameState();
+		} 
 	}
 }

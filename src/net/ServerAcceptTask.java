@@ -23,9 +23,13 @@ public class ServerAcceptTask implements Runnable{
 			serverInstance.is = new DataInputStream(serverInstance.clientSocket.getInputStream());
 			serverInstance.os = new DataOutputStream(serverInstance.clientSocket.getOutputStream());
 			
+			serverInstance.connected = true;
+			System.out.println("Connection made");
+			for( ConnectionStatusChangeListener c: serverInstance.statusListeners){
+				c.ConnectionStatusChange(serverInstance.connected);;
+			}
 			serverInstance.start();
-
-            
+          
         } catch (IOException e) {
             System.err.println("Unable to process client request");
             e.printStackTrace();

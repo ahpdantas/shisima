@@ -13,6 +13,9 @@ public class Client extends NetworkInterface{
 		
 		clientSocket = new Socket(host, port);
 		try{
+			if( clientSocket.isBound() ){
+				this.connected = true;
+			}
 			super.os = new DataOutputStream(clientSocket.getOutputStream());
 			super.is = new DataInputStream(clientSocket.getInputStream());
 			this.start();

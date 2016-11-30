@@ -3,19 +3,20 @@ package logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.Coordinates;
 import logic.Piece;
 import net.NetworkService;
 import net.ShisimaPacket;
+import utils.Coordinates;
 
 public class ShisimaGame  {
-	private int gameState = GAME_STATE_PLAYER_1;
+	private int gameState = GAME_NOT_STARTED;
 	private int player = PLAYER_1;
 	private int winner = UNKNOWN;
 	private NetworkService network;
 	
-	public static final int GAME_STATE_PLAYER_1 = 0;
-	public static final int GAME_STATE_PLAYER_2 = 1;
+	public static final int GAME_NOT_STARTED = 0;
+	public static final int GAME_STATE_PLAYER_1 = 1;
+	public static final int GAME_STATE_PLAYER_2 = 2;
 	
 	public static final int UNKNOWN = 0;
 	public static final int PLAYER_1 = 1;
@@ -32,6 +33,7 @@ public class ShisimaGame  {
 			this.player = PLAYER_1;
 		} else if( this.network.type == net.NetworkService.CLIENT_TYPE ){
 			this.player = PLAYER_2;
+			this.gameState = GAME_STATE_PLAYER_1;
 		}
 		
 		CreatePieces();
@@ -259,6 +261,9 @@ public class ShisimaGame  {
 	public void changeGameState() {
 		
 		switch (this.gameState) {
+			case GAME_NOT_STARTED:
+				this.gameState = GAME_STATE_PLAYER_1;
+			break;
 			case GAME_STATE_PLAYER_1:
 				this.gameState = GAME_STATE_PLAYER_2;
 				break;

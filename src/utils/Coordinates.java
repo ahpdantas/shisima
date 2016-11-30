@@ -1,4 +1,4 @@
-package gui;
+package utils;
 
 public class Coordinates {
 	public int x;
