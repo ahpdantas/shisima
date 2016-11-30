@@ -1,6 +1,5 @@
 package logic;
 
-import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,10 @@ public class ShisimaGame  {
 			this.player = PLAYER_2;
 		}
 		
+		CreatePieces();
+	}
+	
+	private void CreatePieces(){
 		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_1, Piece.ROW_1, Piece.COLUMN_1);
 		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_2, Piece.ROW_1, Piece.COLUMN_2);
 		createAndAddPiece(Piece.TYPE_PLAYER_1, Piece.PIECE_3, Piece.ROW_1, Piece.COLUMN_3);
@@ -42,7 +45,21 @@ public class ShisimaGame  {
 		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_1, Piece.ROW_3, Piece.COLUMN_1);
 		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_2, Piece.ROW_3, Piece.COLUMN_2);
 		createAndAddPiece(Piece.TYPE_PLAYER_2, Piece.PIECE_3, Piece.ROW_3, Piece.COLUMN_3);
+	}
+	
+	public void restart(){
 		
+    	if( this.player == ShisimaGame.PLAYER_1 ){
+    		this.player = ShisimaGame.PLAYER_2;
+    	}else if( this.player == ShisimaGame.PLAYER_2 ){
+    		this.player = ShisimaGame.PLAYER_1;
+    	}
+    	
+    	this.gameState = GAME_STATE_PLAYER_1;
+    	this.winner = UNKNOWN;
+    	
+    	pieces.clear();
+    	CreatePieces();
 	}
 	
 	/**

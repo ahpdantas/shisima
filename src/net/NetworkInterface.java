@@ -17,7 +17,7 @@ public class NetworkInterface extends Thread{
 			os.writeUTF(msg);
 			os.flush();
 		}catch( Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -34,7 +34,7 @@ public class NetworkInterface extends Thread{
 				}
 			}
 		} catch( Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 }

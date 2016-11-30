@@ -236,12 +236,25 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 	
 	void detectWinner(){
 		int winner = this.shisimaGame.getWinner();
-		if( winner == ShisimaGame.NO_WINNER ){
-			JOptionPane.showMessageDialog(null, "There is no Winner in this game!!!");
-		} else if( winner == this.shisimaGame.getPlayer() ){
-			JOptionPane.showMessageDialog(null, "You win!!!");
-		} else if( winner != ShisimaGame.UNKNOWN ){
-			JOptionPane.showMessageDialog(null, "You loose!!!");
+		if( winner != ShisimaGame.UNKNOWN ){
+			if( winner == ShisimaGame.NO_WINNER ){
+				JOptionPane.showMessageDialog(null, "There is no Winner in this game!!!");
+			} else if( winner == this.shisimaGame.getPlayer() ){
+				JOptionPane.showMessageDialog(null, "You win!!!");
+			} else {
+				JOptionPane.showMessageDialog(null, "You loose!!!");
+			}
+			int reply = JOptionPane.showConfirmDialog(null, "Do you really want to play a new Shisima Game?", "Play Again", JOptionPane.YES_NO_OPTION);
+	        if (reply == JOptionPane.YES_OPTION) {
+	        	// create chess game
+	        	this.shisimaGame.restart();
+	        	piecesGui.clear();	        	
+	    		for (Piece piece : this.shisimaGame.getPieces()) {
+	    			createAndAddGuiPiece(piece);
+	    		}
+	 			this.repaint();
+	        }
+	        
 		}
 	}
 
@@ -292,11 +305,11 @@ public class ShisimaGui extends JPanel implements ReceiverListener
 					p.getPiece().setRowColumn(Integer.valueOf(s[1]), Integer.valueOf(s[2]));
 					p.resetToUnderlyingPiecePosition();
 					this.changeGameState();
-					detectWinner();
 					this.repaint();
-									
 				}
 			}
+			
+			detectWinner();
 		}
 	}
 }
