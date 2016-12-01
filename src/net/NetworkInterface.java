@@ -39,7 +39,12 @@ public class NetworkInterface extends Thread{
 					r.receive(msg);
 				}
 			}
-		} catch( Exception e){
+		}catch( java.net.SocketException e ){
+			this.connected = false;
+			for( ConnectionStatusChangeListener c: this.statusListeners){
+				c.ConnectionStatusChange(this.connected);;
+			}
+		}catch( Exception e){
 			e.printStackTrace();
 		}
 	}

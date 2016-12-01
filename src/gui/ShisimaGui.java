@@ -322,7 +322,11 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 	public void ConnectionStatusChange(boolean connected) {
 		System.out.println("Change in the status of connection");
 		if( connected ){
+			JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
 			this.changeGameState();
-		} 
+		} else{
+			JOptionPane.showMessageDialog(null, "The other player closed Shisima Game.");
+			System.exit(0);
+		}
 	}
 }
