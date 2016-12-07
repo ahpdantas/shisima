@@ -46,7 +46,7 @@ public class ShisimaApp extends JFrame {
 		createJMenuBar();
 		
 	    this.setVisible(true);
-	    this.setSize(600, 400);
+	    this.setSize(600, 600);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}

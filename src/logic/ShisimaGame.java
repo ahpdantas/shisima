@@ -11,6 +11,8 @@ import utils.Coordinates;
 public class ShisimaGame  {
 	private int gameState = GAME_NOT_STARTED;
 	private int player = PLAYER_1;
+	private int gamesPlayed = 0;
+	private int wins = 0;
 	private int winner = UNKNOWN;
 	private NetworkService network;
 	
@@ -84,7 +86,7 @@ public class ShisimaGame  {
 	 * @param targetRow the target row (Piece.ROW_..)
 	 * @param targetColumn the target column (Piece.COLUMN_..)
 	 */
-	public void movePiece(int sourceRow, int sourceColumn, int targetRow, int targetColumn) {
+	public boolean movePiece(int sourceRow, int sourceColumn, int targetRow, int targetColumn) {
 		Piece piece = getPieceAtLocation(sourceRow, sourceColumn);
 		Piece targetPiece = getPieceAtLocation(targetRow, targetColumn);
 		
@@ -96,8 +98,10 @@ public class ShisimaGame  {
 				piece.setRowColumn(targetRow, targetColumn);
 				this.changeGameState();
 				this.sendGameStatus(piece.getId(), targetRow, targetColumn);
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	public Boolean tieCondition(List<Coordinates> coordinates){
@@ -294,6 +298,22 @@ public class ShisimaGame  {
 
 	public void setWinner(int winner) {
 		this.winner = winner;
+	}
+
+	public int getGamesPlayed() {
+		return gamesPlayed;
+	}
+
+	public void setGamesPlayed(int gamesPlayed) {
+		this.gamesPlayed = gamesPlayed;
+	}
+
+	public int getWins() {
+		return wins;
+	}
+
+	public void setWins(int wins) {
+		this.wins = wins;
 	}
 
 }

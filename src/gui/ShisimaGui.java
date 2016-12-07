@@ -1,15 +1,20 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
@@ -25,9 +30,19 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
 	private ShisimaGame shisimaGame;
+	private JLabel instruction;
+	private JLabel gamesPlayed;
+	private JLabel wins;
 	
-	private static final int PIECES_START_X = 50;
-	private static final int PIECES_START_Y = 50;
+	private static final int GAME_BORDER_X = 50;
+	private static final int GAME_BORDER_y = 50;
+	
+	private static final int GAME_BOARD_X = 150;
+	private static final int GAME_BOARD_y = 100;
+	
+	
+	private static final int PIECES_START_X = GAME_BOARD_X + GAME_BORDER_X;
+	private static final int PIECES_START_Y = GAME_BOARD_y + GAME_BORDER_y;
 
 	private List<PieceGui> piecesGui = new ArrayList<PieceGui>();
 	
@@ -42,6 +57,23 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 		// create chess game
 		this.shisimaGame = new ShisimaGame(network);
 		
+		this.setLayout(null);
+		
+		this.instruction = new JLabel("Waiting another player...", SwingConstants.CENTER);
+		this.add(this.instruction);
+		this.instruction.setBounds(220, 25, 360, 50);
+		this.instruction.setFont(new Font("Arial", Font.BOLD, 24));
+		
+		this.gamesPlayed = new JLabel("Games: " + this.shisimaGame.getGamesPlayed());
+		this.add(this.gamesPlayed);
+		this.gamesPlayed.setBounds(30, 100, 100, 50);
+		this.gamesPlayed.setFont(new Font("Arial", Font.BOLD, 20));
+		
+		this.wins = new JLabel("Wins: " + this.shisimaGame.getWins() );
+		this.add(this.wins);
+		this.wins.setBounds(30,160,100,50);
+		this.wins.setFont(new Font("Arial", Font.BOLD, 20));
+				
 		//wrap game pieces into their graphical representation
 		for (Piece piece : this.shisimaGame.getPieces()) {
 			createAndAddGuiPiece(piece);
@@ -191,6 +223,9 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 	public int convertCoordinatesToColumn(int x, int y){
 		int PieceSize = 60;		
 		
+		x = x - GAME_BOARD_X;
+		System.out.println("x: "+x);
+		
 		if( x > 25 && x < 25 + PieceSize ){
 			return 1;
 		}
@@ -217,8 +252,10 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 	 * @return logical row for coordinate
 	 */
 	public int convertCoodinatesToRow(int x, int y){
-		int PieceSize = 60;		
+		int PieceSize = 60;
 		
+		y = y - GAME_BOARD_y;
+		System.out.println("y: "+y+"\n");
 		if( y > 25 && y < 25 + PieceSize ){
 			return 1;
 		}
@@ -246,13 +283,23 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 				JOptionPane.showMessageDialog(null, "There is no Winner in this game!!!");
 			} else if( winner == this.shisimaGame.getPlayer() ){
 				JOptionPane.showMessageDialog(null, "You win!!!");
+				this.shisimaGame.setWins(this.shisimaGame.getWins() + 1);
 			} else {
 				JOptionPane.showMessageDialog(null, "You loose!!!");
 			}
+			this.shisimaGame.setGamesPlayed(this.shisimaGame.getGamesPlayed() + 1);
+			this.gamesPlayed.setText("Games: "+this.shisimaGame.getGamesPlayed());
+			this.wins.setText("Wins: "+this.shisimaGame.getWins());
+			
 			int reply = JOptionPane.showConfirmDialog(null, "Do you really want to play a new Shisima Game?", "Play Again", JOptionPane.YES_NO_OPTION);
 	        if (reply == JOptionPane.YES_OPTION) {
 	        	// create chess game
 	        	this.shisimaGame.restart();
+	        	if( this.shisimaGame.getPlayer() == shisimaGame.PLAYER_1){
+	        		this.instruction.setText("Start the game");
+	        	}else{
+	        		this.instruction.setText("Wait the opponent's move");
+	        	}
 	        	piecesGui.clear();	        	
 	    		for (Piece piece : this.shisimaGame.getPieces()) {
 	    			createAndAddGuiPiece(piece);
@@ -282,12 +329,14 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 		}else{
 			//change model and update gui piece afterwards
 			System.out.println("moving piece to "+targetRow+"/"+targetColumn);
-			this.shisimaGame.movePiece(
+			if( this.shisimaGame.movePiece(
 					dragPiece.getPiece().getRow(),
 					dragPiece.getPiece().getColumn(),
 					targetRow, 
-					targetColumn);
-
+					targetColumn) ){
+				this.instruction.setText("Wait the opponent's move");
+			}
+			
 			dragPiece.resetToUnderlyingPiecePosition();
 			detectWinner();
 		}
@@ -308,6 +357,7 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 				if ( p.getPiece().getId() == Integer.valueOf(s[0])
 						&& p.getPiece().getType() != this.getPlayer() ){
 					p.getPiece().setRowColumn(Integer.valueOf(s[1]), Integer.valueOf(s[2]));
+					this.instruction.setText("Your move");
 					p.resetToUnderlyingPiecePosition();
 					this.changeGameState();
 					this.repaint();
@@ -323,6 +373,7 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 		System.out.println("Change in the status of connection");
 		if( connected ){
 			JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
+			this.instruction.setText("Start the game");
 			this.changeGameState();
 		} else{
 			JOptionPane.showMessageDialog(null, "The other player closed Shisima Game.");
