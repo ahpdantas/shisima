@@ -6,7 +6,7 @@ import java.util.List;
 import logic.Piece;
 import net.NetworkService;
 import net.ShisimaPacket;
-import rmi.Player;
+import rmi.PlayerInstance;
 import utils.Coordinates;
 
 public class ShisimaGame  {
@@ -32,10 +32,10 @@ public class ShisimaGame  {
 
 		this.network = network;
 		
-		if( this.network.getPlayer().getType() == Player.Type.PLAYER_1 ){
+		if( this.network.getPlayer().getType() == PlayerInstance.Type.PLAYER_1 ){
 			this.player = PLAYER_1;
 			
-		} else if( this.network.getPlayer().getType() == Player.Type.PLAYER_2 ){
+		} else if( this.network.getPlayer().getType() == PlayerInstance.Type.PLAYER_2 ){
 			this.player = PLAYER_2;
 			this.gameState = GAME_STATE_PLAYER_1;
 			this.network.send(new ShisimaPacket("","","","start"));

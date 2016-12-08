@@ -1,5 +1,5 @@
 package net;
 
-public interface ReceiverListener {
+public interface ReceiverListenerInterface {
 	void receive(String message);
 }

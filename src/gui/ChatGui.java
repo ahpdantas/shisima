@@ -21,9 +21,9 @@ import javax.swing.JTextField;
 
 import logic.Chat;
 import net.NetworkService;
-import net.ReceiverListener;
+import net.ReceiverListenerInterface;
 
-public class ChatGui extends JPanel implements ActionListener, KeyListener, ReceiverListener {
+public class ChatGui extends JPanel implements ActionListener, KeyListener, ReceiverListenerInterface {
 	private static final long serialVersionUID = 1L;
 	private LayoutManager layout;
 	private JTextArea messageLog;

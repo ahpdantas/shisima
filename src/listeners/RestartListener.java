@@ -8,10 +8,10 @@ import javax.swing.JOptionPane;
 import app.ShisimaApp;
 import gui.ChatGui;
 import gui.ShisimaGui;
-import net.ReceiverListener;
+import net.ReceiverListenerInterface;
 import net.ShisimaPacket;
 
-public class RestartListener implements ActionListener, ReceiverListener {
+public class RestartListener implements ActionListener, ReceiverListenerInterface {
 	private ShisimaApp app;
 	
 	public RestartListener(ShisimaApp app) {

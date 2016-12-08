@@ -1,19 +1,20 @@
 package net;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.UUID;
+import rmi.PlayerInstance;
+import rmi.TransmitRmiInterface;
 
-import rmi.Player;
-import rmi.ShisimaGameInterface;
-
-public class NetworkService {
-	private ArrayList<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
-	private ShisimaGameInterface rmi;
-	private Player player;
+public class NetworkService implements ReceiverRmiInterface {
+	private ArrayList<ReceiverListenerInterface> receiverListeners = new ArrayList<ReceiverListenerInterface>();
+	private TransmitRmiInterface rmi;
+	private PlayerInstance player;
 	
 
-	public NetworkService(ShisimaGameInterface rmi){
+	public NetworkService(TransmitRmiInterface rmi){
 		this.rmi = rmi;
 		
 		try {
@@ -21,14 +22,24 @@ public class NetworkService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		ReceiverTask r = new ReceiverTask(this);
-		Thread receiving = new Thread(r);
-		receiving.start();
+		
+		try {
+			Registry registry = LocateRegistry.getRegistry();
+			ReceiverRmiInterface stub = (ReceiverRmiInterface) UnicastRemoteObject.exportObject(this, 0);
+			// Bind the remote object's stub in the registry
+            registry.rebind(this.player.getUserId().toString(), stub);
+            
+            
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		
 	}
 
-	public Player login(){
+	public PlayerInstance login(){
 		try {
 			return this.rmi.login();
 		} catch (RemoteException e) {
@@ -41,33 +52,31 @@ public class NetworkService {
 	public void send(ShisimaPacket pack) {
 		System.out.println("Sending packet");
 		try {
-			this.rmi.publish(this.player, pack.toString());
+			this.rmi.transmit(this.player, pack.toString());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public String receive(){
-		try {
-			return this.rmi.receive(player);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	@Override
+	public void receive(String msg) throws RemoteException {
+		for( ReceiverListenerInterface r: this.getReceiverListeners()){
+			if( msg != null ){
+				r.receive(msg);
+			}
 		}
-		return null;
+	}
+
+	public PlayerInstance getPlayer(){
+		return this.player;
 	}
 	
-	public void addReceiverListener(ReceiverListener r){
+	public void addReceiverListener(ReceiverListenerInterface r){
 		this.receiverListeners.add(r);
 	}
 	
-	public ArrayList<ReceiverListener> getReceiverListeners() {
+	public ArrayList<ReceiverListenerInterface> getReceiverListeners() {
 		return receiverListeners;
 	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
 }

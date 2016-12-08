@@ -21,7 +21,7 @@ import listeners.NewListener;
 import listeners.UserNameListener;
 import net.NetworkService;
 import net.ShisimaPacket;
-import rmi.ShisimaGameInterface;
+import rmi.TransmitRmiInterface;
 
 public class ShisimaApp extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -128,7 +128,7 @@ public class ShisimaApp extends JFrame{
         try {
             Registry registry = LocateRegistry.getRegistry(null);
             ShisimaApp player = new ShisimaApp( 
-            		new NetworkService((ShisimaGameInterface) registry.lookup("Shisima"))); 
+            		new NetworkService((TransmitRmiInterface) registry.lookup("Shisima"))); 
          } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();

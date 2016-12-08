@@ -1,18 +1,21 @@
 package rmi;
 
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShisimaGameRmiServer implements ShisimaGameInterface {
-	private List<ShisimaServer> games = new ArrayList<ShisimaServer>();
+public class ShisimaGameRmiServer implements TransmitRmiInterface {
+	private List<GameInstance> games = new ArrayList<GameInstance>();
 	
-	private ShisimaServer getNextFreeGame(){
-		for (ShisimaServer game : this.games) {
-			if( game.getState() == ShisimaServer.States.NOT_STARTED || 
-					game.getState() == ShisimaServer.States.WAITING_PLAYER_2){
+	private GameInstance getNextFreeGame(){
+		for (GameInstance game : this.games) {
+			if( game.getState() == GameInstance.States.NOT_STARTED || 
+					game.getState() == GameInstance.States.WAITING_PLAYER_2){
 				return game;
 			}
 		}
@@ -20,16 +23,16 @@ public class ShisimaGameRmiServer implements ShisimaGameInterface {
 	}
 	
 	@Override
-	public Player login() {
+	public PlayerInstance login() {
 		
-		Player p = new Player();
+		PlayerInstance p = new PlayerInstance();
 		
-		ShisimaServer game = getNextFreeGame();
+		GameInstance game = getNextFreeGame();
 		if( game != null ){
 			p.setGameID(game.getSerialID());
 			game.addPlayer(p);
 		} else{
-			game = new ShisimaServer();
+			game = new GameInstance();
 			p.setGameID(game.getSerialID());
 			game.addPlayer(p);
 			games.add(game);
@@ -39,42 +42,27 @@ public class ShisimaGameRmiServer implements ShisimaGameInterface {
 	}
 	
 	@Override
-	public void publish(Player p, String msg) {
+	public void transmit(PlayerInstance p, String msg) {
 		System.out.println("Publishing message...");
-		for (ShisimaServer game : this.games) {
+		for (GameInstance game : this.games) {
 			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
 				System.out.println("Saving message...");
-				game.publish(p.getUserId(),msg);
+				game.transmit(p,msg);
 			}
 		}
-	}
-	
-	@Override
-	public String receive(Player p) {
-		for (ShisimaServer game : this.games) {
-			if(game.getSerialID().compareTo(p.getGameID()) == 0){
-				return game.receive(p.getUserId());
-			}
-		}
-		return null;
 	}
 	
 	public static void main( String args[] ){
+		
 		try{
-			
-			Registry registry = LocateRegistry.createRegistry(1099);
-			
+			Registry registry = LocateRegistry.getRegistry();
 			ShisimaGameRmiServer server = new ShisimaGameRmiServer();
-			ShisimaGameInterface stub = (ShisimaGameInterface) UnicastRemoteObject.exportObject(server, 0);
-			
-			 // Bind the remote object's stub in the registry
-            registry.bind("Shisima", stub);
-
-            System.err.println("Shisima Server Ready...");
-		}catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        }
+			TransmitRmiInterface stub = (TransmitRmiInterface) UnicastRemoteObject.exportObject(server, 0);
+			registry.rebind("Shisima", stub);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+        System.err.println("Shisima Server Ready...");
 	}
 
 }

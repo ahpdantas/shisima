@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import app.ShisimaApp;
-import net.ReceiverListener;
+import net.ReceiverListenerInterface;
 import net.ShisimaPacket;
 
-public class ExitListener implements ActionListener, ReceiverListener {
+public class ExitListener implements ActionListener, ReceiverListenerInterface {
 	private ShisimaApp app;
 	
 	public ExitListener(ShisimaApp app){

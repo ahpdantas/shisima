@@ -19,12 +19,12 @@ import javax.swing.SwingConstants;
 import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
 import net.NetworkService;
-import net.ReceiverListener;
+import net.ReceiverListenerInterface;
 import utils.Coordinates;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel implements ReceiverListener
+public class ShisimaGui extends JPanel implements ReceiverListenerInterface
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;

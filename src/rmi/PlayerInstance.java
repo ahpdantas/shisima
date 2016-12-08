@@ -3,7 +3,7 @@ package rmi;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class Player implements Serializable {
+public class PlayerInstance implements Serializable {
 	public enum Type{
 		PLAYER_1, PLAYER_2
 	};
@@ -11,7 +11,7 @@ public class Player implements Serializable {
 	private UUID gameID;
 	private Type type;
 		
-	public Player(){
+	public PlayerInstance(){
 		this.userID = UUID.randomUUID();
 	}
 		
