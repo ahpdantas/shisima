@@ -34,9 +34,6 @@ public class NetworkService implements ReceiverRmiInterface {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
-		
 	}
 
 	public PlayerInstance login(){
@@ -61,11 +58,9 @@ public class NetworkService implements ReceiverRmiInterface {
 	
 	@Override
 	public void receive(String msg) throws RemoteException {
-		for( ReceiverListenerInterface r: this.getReceiverListeners()){
-			if( msg != null ){
-				r.receive(msg);
-			}
-		}
+		ReceiverTask r = new ReceiverTask(this.receiverListeners, msg);
+		Thread receiving = new Thread(r);
+		receiving.start();
 	}
 
 	public PlayerInstance getPlayer(){
