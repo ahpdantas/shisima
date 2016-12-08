@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import app.ShisimaApp;
 import gui.ChatGui;
 import gui.ShisimaGui;
-import net.NetworkService;
 
 public class NewListener implements ActionListener{
 	private ShisimaApp app;
@@ -20,17 +19,9 @@ public class NewListener implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e){
 		
-		if( app.network != null || app.chat != null || app.shisima != null ){
+		if( app.chat != null || app.shisima != null ){
 			JOptionPane.showMessageDialog(null, "There is a empty game running!!!");
 			return;
-		}
-		
-		try{
-			app.network = new NetworkService(app.getIpAddress(),app.getPort());
-		}catch(java.net.ConnectException ex){
-			app.network = new NetworkService(app.getPort());
-		} catch (Exception e1) {
-			e1.printStackTrace();
 		}
 		
 		app.restartSubMenu.addActionListener(new RestartListener(app));

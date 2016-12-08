@@ -18,14 +18,13 @@ import javax.swing.SwingConstants;
 
 import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
-import net.ConnectionStatusChangeListener;
 import net.NetworkService;
 import net.ReceiverListener;
 import utils.Coordinates;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionStatusChangeListener
+public class ShisimaGui extends JPanel implements ReceiverListener
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
@@ -50,7 +49,6 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 		//background
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
 		network.addReceiverListener(this);
-		network.addConnectionStatusChangeListener(this);
 		
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
 		
@@ -366,18 +364,14 @@ public class ShisimaGui extends JPanel implements ReceiverListener, ConnectionSt
 			
 			detectWinner();
 		}
-	}
-
-	@Override
-	public void ConnectionStatusChange(boolean connected) {
-		System.out.println("Change in the status of connection");
-		if( connected ){
-			JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
-			this.instruction.setText("Start the game");
-			this.changeGameState();
-		} else{
-			JOptionPane.showMessageDialog(null, "The other player closed Shisima Game.");
-			System.exit(0);
+		
+		if( msg.length >= 4 && !msg[3].isEmpty() ){
+			if( msg[3].compareTo("start") == 0){
+				JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
+				this.instruction.setText("Start the game");
+				this.changeGameState();
+			} 
 		}
 	}
+
 }

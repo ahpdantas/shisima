@@ -1,59 +1,77 @@
 package app;
 
+
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-
 import java.awt.event.KeyEvent;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import gui.ChatGui;
 import gui.ShisimaGui;
-import listeners.IpAddressListener;
 import listeners.NewListener;
-import listeners.PortListener;
 import listeners.UserNameListener;
 import net.NetworkService;
+import net.ShisimaPacket;
+import rmi.ShisimaGameInterface;
 
-public class ShisimaApp extends JFrame {
-	
+public class ShisimaApp extends JFrame{
 	private static final long serialVersionUID = 1L;
+	public NetworkService network;
 	private String userName = "user";
-	
-
-	private String ipAddress = "127.0.0.1";
-	private int port = 5000;
 	private LayoutManager layout;
 	
-	public  NetworkService network;
 	public ChatGui chat;
 	public ShisimaGui shisima;
 	
 	public JMenuItem restartSubMenu;
 	public JMenuItem exitSubMenu;
 	
-	public ShisimaApp(){
-		// create application frame and set visible
-		layout = new FlowLayout();
+
+	public ShisimaApp(NetworkService net) {
+		this.network = net;
+		
+		this.layout = new FlowLayout();
 		this.setLayout(layout);
 		this.setTitle("Shisima Game");
 		
 		createJMenuBar();
 		
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(ShisimaApp.this, 
+		            "Are you sure to close this window?", "Really Closing?", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		        	ShisimaApp.this.network.send(new ShisimaPacket("","","","close"));
+		            System.exit(0);
+		        }
+		    }});
 	    this.setVisible(true);
 	    this.setSize(600, 600);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+	}
+	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	private void createJMenuBar(){
 		JMenuBar menuBar;
-		JMenu menu, submenu;
+		JMenu menu;
 		JMenuItem menuItem;
 
 		//Create the menu bar.
@@ -100,51 +118,21 @@ public class ShisimaApp extends JFrame {
 		menuItem.addActionListener(new UserNameListener(this)); 
 		menu.add(menuItem);
 		
-		//a submenu
-		menu.addSeparator();
-		
-		submenu = new JMenu("Network Settings");
-		submenu.setMnemonic(KeyEvent.VK_S);
-		
-		menuItem = new JMenuItem("I.P Address",KeyEvent.VK_I);
-		menuItem.addActionListener(new IpAddressListener(this) ); 
-		submenu.add(menuItem);
-
-		menuItem = new JMenuItem("Port",KeyEvent.VK_P);
-		menuItem.addActionListener(new PortListener(this));
-		submenu.add(menuItem);
-		menu.add(submenu);
-		
 		menuBar.add(menu);
 		this.setJMenuBar(menuBar);
+		
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	
-	public String getIpAddress() {
-		return ipAddress;
-	}
-
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-	
 	public static void main(String[] args) {
-		new ShisimaApp();
-	}
+				
+        try {
+            Registry registry = LocateRegistry.getRegistry(null);
+            ShisimaApp player = new ShisimaApp( 
+            		new NetworkService((ShisimaGameInterface) registry.lookup("Shisima"))); 
+         } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -1,39 +1,73 @@
 package net;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import rmi.Player;
+import rmi.ShisimaGameInterface;
 
 public class NetworkService {
-	public static final int CLIENT_TYPE = 1;
-	public static final int SERVER_TYPE = 2;
+	private ArrayList<ReceiverListener> receiverListeners = new ArrayList<ReceiverListener>();
+	private ShisimaGameInterface rmi;
+	private Player player;
 	
-	
-	private NetworkInterface net; 
-	public int type = SERVER_TYPE;
-	
-	public NetworkService(int port){
-		net = new Server(port);
-		this.type = SERVER_TYPE;
+
+	public NetworkService(ShisimaGameInterface rmi){
+		this.rmi = rmi;
+		
+		try {
+			this.player = this.rmi.login();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ReceiverTask r = new ReceiverTask(this);
+		Thread receiving = new Thread(r);
+		receiving.start();
+		
+	}
+
+	public Player login(){
+		try {
+			return this.rmi.login();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public NetworkService(String host, int port) throws UnknownHostException, IOException{
-		net = new Client(host,port);
-		this.type = CLIENT_TYPE;
+	public void send(ShisimaPacket pack) {
+		System.out.println("Sending packet");
+		try {
+			this.rmi.publish(this.player, pack.toString());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void send(ShisimaPacket pack) throws Exception{
-		net.send(pack.toString());
+	public String receive(){
+		try {
+			return this.rmi.receive(player);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void addReceiverListener(ReceiverListener r){
-		net.addReceiverListener(r);
+		this.receiverListeners.add(r);
 	}
 	
-	public void addConnectionStatusChangeListener(ConnectionStatusChangeListener c){
-		System.out.println("Adding statusListener to "+this.type);
-		net.addConnectionStatusChangeListener(c);
+	public ArrayList<ReceiverListener> getReceiverListeners() {
+		return receiverListeners;
 	}
-	
-	
+
+	public Player getPlayer() {
+		return player;
+	}
 
 }
