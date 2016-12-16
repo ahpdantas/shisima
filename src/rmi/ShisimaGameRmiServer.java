@@ -49,6 +49,7 @@ public class ShisimaGameRmiServer implements GameMethodsInterface {
 	
 	@Override
 	public void startGame(PlayerInstance p) {
+		System.out.println("Starting game");
 		for (GameInstance game : this.games) {
 			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
 				game.startGame(p);

@@ -22,13 +22,12 @@ import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
 import net.RemoteGameService;
 import net.RestartGameInterface;
-import net.StartGameInterface;
 import net.UpdateGameStatusInterface;
 import utils.Coordinates;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel implements UpdateGameStatusInterface, StartGameInterface
+public class ShisimaGui extends JPanel implements UpdateGameStatusInterface
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
@@ -98,16 +97,6 @@ public class ShisimaGui extends JPanel implements UpdateGameStatusInterface, Sta
 			UpdateGameStatusInterface stub = (UpdateGameStatusInterface) UnicastRemoteObject.exportObject(this, 0);
 			// Bind the remote object's stub in the registry
             registry.rebind(remoteGame.getPlayer().getUserId().toString()+":update", stub);
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		try {
-			Registry registry = LocateRegistry.getRegistry();
-			StartGameInterface stub = (StartGameInterface) UnicastRemoteObject.exportObject(this, 0);
-			// Bind the remote object's stub in the registry
-            registry.rebind(remoteGame.getPlayer().getUserId().toString()+":start", stub);
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -379,6 +368,7 @@ public class ShisimaGui extends JPanel implements UpdateGameStatusInterface, Sta
 			if ( p.getPiece().getId() == pieceId 
 					&& p.getPiece().getType() != this.getPlayer() ){
 				p.getPiece().setRowColumn(row, column);
+				this.instruction.setText("Your move");
 				p.resetToUnderlyingPiecePosition();
 				this.changeGameState();
 				this.repaint();

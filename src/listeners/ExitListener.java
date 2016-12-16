@@ -20,7 +20,7 @@ public class ExitListener implements ActionListener, CloseGameInterface {
 		this.app = app;
 		try {
 			Registry registry = LocateRegistry.getRegistry();
-			RestartGameInterface stub = (RestartGameInterface) UnicastRemoteObject.exportObject(this, 0);
+			CloseGameInterface stub = (CloseGameInterface) UnicastRemoteObject.exportObject(this, 0);
 			// Bind the remote object's stub in the registry
             registry.rebind(this.app.remoteGame.getPlayer().getUserId().toString()+":close", stub);
 		} catch (RemoteException e1) {

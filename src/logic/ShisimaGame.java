@@ -34,6 +34,7 @@ public class ShisimaGame  {
 		
 		if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_1 ){
 			this.player = PLAYER_1;
+			System.out.println("I'm player1");
 			
 		} else if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_2 ){
 			this.player = PLAYER_2;

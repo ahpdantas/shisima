@@ -32,23 +32,49 @@ public class RemoteGameService {
 	}
 	
 	public void movePiece( int pieceId, int row, int column ){
-		this.remoteGame.movePiece(this.player, pieceId, row, column);
+		try {
+			this.remoteGame.movePiece(this.player, pieceId, row, column);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void startGame(){
-		this.remoteGame.startGame(this.player);
+		System.out.println("I'm player2");
+		try {
+			this.remoteGame.startGame(this.player);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void restartGame(){
-		this.remoteGame.restartGame(this.player);
+		try {
+			this.remoteGame.restartGame(this.player);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void closeGame(){
-		this.remoteGame.closeGame(this.player);
+		try {
+			this.remoteGame.closeGame(this.player);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void sendMessage(String userName, String message){
-		this.remoteGame.sendMessage(this.player, userName, message);
+		try {
+			this.remoteGame.sendMessage(this.player, userName, message);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

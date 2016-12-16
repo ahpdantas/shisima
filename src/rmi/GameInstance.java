@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import net.CloseGameInterface;
 import net.RestartGameInterface;
-import net.StartGameInterface;
 import net.UpdateChatInterface;
 import net.UpdateGameStatusInterface;
 
@@ -52,7 +51,7 @@ public class GameInstance {
 	public void movePiece(PlayerInstance p, int pieceId, int row, int column){
 		try{
 			Registry registry = LocateRegistry.getRegistry(null);
-			UpdateGameStatusInterface board = (UpdateGameStatusInterface) registry.lookup(getOpponentID(p).toString());
+			UpdateGameStatusInterface board = (UpdateGameStatusInterface) registry.lookup(getOpponentID(p).toString()+":update");
 			board.updatePieceMoviment(pieceId, row, column);
 		}catch( Exception e){
 			e.printStackTrace();
@@ -61,9 +60,10 @@ public class GameInstance {
 	
 	public void startGame(PlayerInstance p) {
 		// TODO Auto-generated method stub
+		System.out.println("Starting game");
 		try{
 			Registry registry = LocateRegistry.getRegistry(null);
-			StartGameInterface instance = (StartGameInterface) registry.lookup(getOpponentID(p).toString()+":start");
+			UpdateGameStatusInterface instance = (UpdateGameStatusInterface) registry.lookup(getOpponentID(p).toString()+":update");
 			instance.startGame();
 		}catch( Exception e){
 			e.printStackTrace();
