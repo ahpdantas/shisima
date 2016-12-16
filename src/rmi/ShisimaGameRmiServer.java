@@ -1,15 +1,12 @@
 package rmi;
 
-import java.rmi.AccessException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShisimaGameRmiServer implements TransmitRmiInterface {
+public class ShisimaGameRmiServer implements GameMethodsInterface {
 	private List<GameInstance> games = new ArrayList<GameInstance>();
 	
 	private GameInstance getNextFreeGame(){
@@ -40,15 +37,52 @@ public class ShisimaGameRmiServer implements TransmitRmiInterface {
 		return p;
 		
 	}
-	
+
 	@Override
-	public void transmit(PlayerInstance p, String msg) {
-		System.out.println("Publishing message...");
+	public void movePiece(PlayerInstance p, int pieceId, int row, int column) {
 		for (GameInstance game : this.games) {
 			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
-				System.out.println("Saving message...");
-				game.transmit(p,msg);
+				game.movePiece(p,pieceId,row,column);
 			}
+		}
+	}
+	
+	@Override
+	public void startGame(PlayerInstance p) {
+		for (GameInstance game : this.games) {
+			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
+				game.startGame(p);
+			}
+		}
+	}
+	
+
+	@Override
+	public void closeGame(PlayerInstance p) {
+		for (GameInstance game : this.games) {
+			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
+				game.closeGame(p);
+			}
+		}
+		
+	}
+
+	
+	@Override
+	public void restartGame(PlayerInstance p) {
+		for (GameInstance game : this.games) {
+			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
+				game.restartGame(p);
+			}
+		}
+		
+	}
+	
+	@Override
+	public void sendMessage(PlayerInstance p, String userName, String msg) {
+		for (GameInstance game : this.games) {
+			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
+				game.sendMessage(p, userName, msg);			}
 		}
 	}
 	
@@ -57,8 +91,8 @@ public class ShisimaGameRmiServer implements TransmitRmiInterface {
 		try{
 			Registry registry = LocateRegistry.getRegistry();
 			ShisimaGameRmiServer server = new ShisimaGameRmiServer();
-			TransmitRmiInterface stub = (TransmitRmiInterface) UnicastRemoteObject.exportObject(server, 0);
-			registry.rebind("Shisima", stub);
+			GameMethodsInterface stub = (GameMethodsInterface) UnicastRemoteObject.exportObject(server, 0);
+			registry.rebind("GameMethods", stub);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

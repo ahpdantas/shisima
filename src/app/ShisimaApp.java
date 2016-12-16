@@ -19,13 +19,12 @@ import gui.ChatGui;
 import gui.ShisimaGui;
 import listeners.NewListener;
 import listeners.UserNameListener;
-import net.NetworkService;
-import net.ShisimaPacket;
-import rmi.TransmitRmiInterface;
+import net.RemoteGameService;
+import rmi.GameMethodsInterface;
 
 public class ShisimaApp extends JFrame{
 	private static final long serialVersionUID = 1L;
-	public NetworkService network;
+	public  RemoteGameService remoteGame;
 	private String userName = "user";
 	private LayoutManager layout;
 	
@@ -36,8 +35,8 @@ public class ShisimaApp extends JFrame{
 	public JMenuItem exitSubMenu;
 	
 
-	public ShisimaApp(NetworkService net) {
-		this.network = net;
+	public ShisimaApp(RemoteGameService remoteGame) {
+		this.remoteGame = remoteGame;
 		
 		this.layout = new FlowLayout();
 		this.setLayout(layout);
@@ -52,7 +51,7 @@ public class ShisimaApp extends JFrame{
 		            "Are you sure to close this window?", "Really Closing?", 
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-		        	ShisimaApp.this.network.send(new ShisimaPacket("","","","close"));
+		        	ShisimaApp.this.remoteGame.closeGame();
 		            System.exit(0);
 		        }
 		    }});
@@ -128,7 +127,7 @@ public class ShisimaApp extends JFrame{
         try {
             Registry registry = LocateRegistry.getRegistry(null);
             ShisimaApp player = new ShisimaApp( 
-            		new NetworkService((TransmitRmiInterface) registry.lookup("Shisima"))); 
+            		new RemoteGameService((GameMethodsInterface) registry.lookup("GameMethods"))); 
          } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();

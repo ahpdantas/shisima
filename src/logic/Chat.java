@@ -1,23 +1,21 @@
 package logic;
 
 import javax.swing.JOptionPane;
+import net.RemoteGameService;
 
-import net.NetworkService;
-import net.ShisimaPacket;
 
 public class Chat {
-	private NetworkService network;
+	private RemoteGameService remoteGame;
 	private String userName;
 		
-	public Chat(String userName, NetworkService network){
+	public Chat(String userName, RemoteGameService remoteGame){
 		this.userName = userName;
-		this.network = network;
+		this.remoteGame = remoteGame;
 	}
 	
 	public void SendMessage(String msg) {
 		try{
-			ShisimaPacket pack = new ShisimaPacket(this.userName,msg,"","");
-			network.send(pack);
+			remoteGame.sendMessage(this.userName,msg);
 		}catch( Exception e){
 			JOptionPane.showMessageDialog(null, "Waiting for a Client connection.");
 		}

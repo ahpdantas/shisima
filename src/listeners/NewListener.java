@@ -28,8 +28,8 @@ public class NewListener implements ActionListener{
 		app.exitSubMenu.addActionListener(new ExitListener(app));
 		
 		
-		app.chat = new ChatGui(app.getUserName(),app.network);
-		app.shisima = new ShisimaGui(app.network);
+		app.chat = new ChatGui(app.getUserName(),app.remoteGame);
+		app.shisima = new ShisimaGui(app.remoteGame);
 		
 		app.add(app.chat);
 		app.add(app.shisima);

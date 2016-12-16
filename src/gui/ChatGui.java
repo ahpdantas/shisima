@@ -9,6 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -20,10 +24,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import logic.Chat;
-import net.NetworkService;
-import net.ReceiverListenerInterface;
+import net.RemoteGameService;
+import net.UpdateChatInterface;
+import net.UpdateGameStatusInterface;
 
-public class ChatGui extends JPanel implements ActionListener, KeyListener, ReceiverListenerInterface {
+public class ChatGui extends JPanel implements ActionListener, KeyListener, UpdateChatInterface {
 	private static final long serialVersionUID = 1L;
 	private LayoutManager layout;
 	private JTextArea messageLog;
@@ -31,13 +36,23 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Rece
 	private JButton btnSend;
 	private Chat chat;
 
-	public ChatGui(String userName, NetworkService network){
+	public ChatGui(String userName, RemoteGameService gameService){
+		
+		try {
+			Registry registry = LocateRegistry.getRegistry();
+			UpdateChatInterface stub = (UpdateChatInterface) UnicastRemoteObject.exportObject(this, 0);
+			// Bind the remote object's stub in the registry
+            registry.rebind(gameService.getPlayer().getUserId().toString()+":chat", stub);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
      
 		layout = new BorderLayout();
 		this.setLayout(layout);
 		
-		this.chat = new Chat(userName,network);
-		network.addReceiverListener(this);
+		this.chat = new Chat(userName,gameService);
 		
 	    messageLog = new JTextArea(15,10);
 	    messageLog.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
@@ -84,15 +99,11 @@ public class ChatGui extends JPanel implements ActionListener, KeyListener, Rece
 	}
 	
 	@Override
-	public void receive(String message) {
-		
-		String[] msg = message.split(":");
-		System.out.println(message);
-		if( msg.length >= 2 && !msg[0].isEmpty() && !msg[1].isEmpty( ) ){
-			messageLog.append(msg[0] + " said: "+ msg[1] + "\r\n");
-		}
+	public void updateChat(String userName, String msg) {
+		// TODO Auto-generated method stub
+		messageLog.append(userName + " said: "+ msg + "\r\n");
 	}
-			
+	
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(200, 400);

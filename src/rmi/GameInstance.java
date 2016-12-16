@@ -3,7 +3,12 @@ package rmi;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.UUID;
-import net.ReceiverRmiInterface;
+
+import net.CloseGameInterface;
+import net.RestartGameInterface;
+import net.StartGameInterface;
+import net.UpdateChatInterface;
+import net.UpdateGameStatusInterface;
 
 public class GameInstance {
 	public enum States{
@@ -44,14 +49,61 @@ public class GameInstance {
 		}
 	}
 	
-	public void transmit(PlayerInstance p, String msg){
+	public void movePiece(PlayerInstance p, int pieceId, int row, int column){
 		try{
 			Registry registry = LocateRegistry.getRegistry(null);
-			ReceiverRmiInterface receiver = (ReceiverRmiInterface) registry.lookup(getOpponentID(p).toString());
-			receiver.receive(msg);
+			UpdateGameStatusInterface board = (UpdateGameStatusInterface) registry.lookup(getOpponentID(p).toString());
+			board.updatePieceMoviment(pieceId, row, column);
 		}catch( Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public void startGame(PlayerInstance p) {
+		// TODO Auto-generated method stub
+		try{
+			Registry registry = LocateRegistry.getRegistry(null);
+			StartGameInterface instance = (StartGameInterface) registry.lookup(getOpponentID(p).toString()+":start");
+			instance.startGame();
+		}catch( Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+
+	public void closeGame(PlayerInstance p) {
+		try{
+			Registry registry = LocateRegistry.getRegistry(null);
+			CloseGameInterface instance = (CloseGameInterface) registry.lookup(getOpponentID(p).toString()+":close");
+			instance.closeGame();
+		}catch( Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
+	
+	public void restartGame(PlayerInstance p) {
+		try{
+			Registry registry = LocateRegistry.getRegistry(null);
+			RestartGameInterface instance = (RestartGameInterface) registry.lookup(getOpponentID(p).toString()+":restart");
+			instance.RestartGame();
+		}catch( Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void sendMessage(PlayerInstance p, String userName, String msg) {
+		try{
+			Registry registry = LocateRegistry.getRegistry(null);
+			UpdateChatInterface instance = (UpdateChatInterface) registry.lookup(getOpponentID(p).toString()+":chat");
+			instance.updateChat(userName, msg);
+		}catch( Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 	
 	

@@ -1,15 +1,17 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.net.URL;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,13 +20,15 @@ import javax.swing.SwingConstants;
 
 import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
-import net.NetworkService;
-import net.ReceiverListenerInterface;
+import net.RemoteGameService;
+import net.RestartGameInterface;
+import net.StartGameInterface;
+import net.UpdateGameStatusInterface;
 import utils.Coordinates;
 import logic.Piece;
 
 
-public class ShisimaGui extends JPanel implements ReceiverListenerInterface
+public class ShisimaGui extends JPanel implements UpdateGameStatusInterface, StartGameInterface
 {
 	private static final long serialVersionUID = 3114147670071466558L;
 	private Image imgBackground;
@@ -45,15 +49,17 @@ public class ShisimaGui extends JPanel implements ReceiverListenerInterface
 
 	private List<PieceGui> piecesGui = new ArrayList<PieceGui>();
 	
-	public ShisimaGui(NetworkService network){
+	public ShisimaGui(RemoteGameService remoteGame ){
+		
+		registerRmiMethods(remoteGame);
 		//background
 		URL urlBackgroundImg = getClass().getResource("/shisima/img/board.png");
-		network.addReceiverListener(this);
+		//network.addReceiverListener(this);
 		
 		this.imgBackground = new ImageIcon(urlBackgroundImg).getImage();
 		
 		// create chess game
-		this.shisimaGame = new ShisimaGame(network);
+		this.shisimaGame = new ShisimaGame(remoteGame);
 		
 		this.setLayout(null);
 		
@@ -85,6 +91,31 @@ public class ShisimaGui extends JPanel implements ReceiverListenerInterface
 		
 	}
 		
+	private void registerRmiMethods(RemoteGameService remoteGame){
+		
+		try {
+			Registry registry = LocateRegistry.getRegistry();
+			UpdateGameStatusInterface stub = (UpdateGameStatusInterface) UnicastRemoteObject.exportObject(this, 0);
+			// Bind the remote object's stub in the registry
+            registry.rebind(remoteGame.getPlayer().getUserId().toString()+":update", stub);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			Registry registry = LocateRegistry.getRegistry();
+			StartGameInterface stub = (StartGameInterface) UnicastRemoteObject.exportObject(this, 0);
+			// Bind the remote object's stub in the registry
+            registry.rebind(remoteGame.getPlayer().getUserId().toString()+":start", stub);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
+	
+	
 	/**
 	 * create a game piece
 	 * 
@@ -342,36 +373,25 @@ public class ShisimaGui extends JPanel implements ReceiverListenerInterface
 	}
 	
 	@Override
-	public void receive(String message) {
-		String[] msg = message.split(":");
-				
-		if( msg.length >= 3 && !msg[2].isEmpty() ){
-			String[] s = msg[2].split(",");
-			
-			System.out.println("Receiving packet");
-			System.out.println("Player: "+this.getPlayer());
-			
-			for( PieceGui p: piecesGui){
-				if ( p.getPiece().getId() == Integer.valueOf(s[0])
-						&& p.getPiece().getType() != this.getPlayer() ){
-					p.getPiece().setRowColumn(Integer.valueOf(s[1]), Integer.valueOf(s[2]));
-					this.instruction.setText("Your move");
-					p.resetToUnderlyingPiecePosition();
-					this.changeGameState();
-					this.repaint();
-				}
-			}
-			
-			detectWinner();
-		}
+	public void updatePieceMoviment(int pieceId, int row, int column) throws RemoteException {
 		
-		if( msg.length >= 4 && !msg[3].isEmpty() ){
-			if( msg[3].compareTo("start") == 0){
-				JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
-				this.instruction.setText("Start the game");
+		for( PieceGui p: piecesGui){
+			if ( p.getPiece().getId() == pieceId 
+					&& p.getPiece().getType() != this.getPlayer() ){
+				p.getPiece().setRowColumn(row, column);
+				p.resetToUnderlyingPiecePosition();
 				this.changeGameState();
-			} 
+				this.repaint();
+			}
 		}
+		detectWinner();
+	}
+
+	@Override
+	public void startGame() {
+		JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
+		this.instruction.setText("Start the game");
+		this.changeGameState();
 	}
 
 }

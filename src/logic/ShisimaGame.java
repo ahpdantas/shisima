@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.Piece;
-import net.NetworkService;
-import net.ShisimaPacket;
+import net.RemoteGameService;
+import rmi.GameMethodsInterface;
 import rmi.PlayerInstance;
 import utils.Coordinates;
 
@@ -15,7 +15,7 @@ public class ShisimaGame  {
 	private int gamesPlayed = 0;
 	private int wins = 0;
 	private int winner = UNKNOWN;
-	private NetworkService network;
+	private RemoteGameService gameService;
 	
 	public static final int GAME_NOT_STARTED = 0;
 	public static final int GAME_STATE_PLAYER_1 = 1;
@@ -28,17 +28,17 @@ public class ShisimaGame  {
 	
 	private List<Piece> pieces = new ArrayList<Piece>();
 	
-	public ShisimaGame(NetworkService network){
+	public ShisimaGame(RemoteGameService gameService){
 
-		this.network = network;
+		this.gameService = gameService;
 		
-		if( this.network.getPlayer().getType() == PlayerInstance.Type.PLAYER_1 ){
+		if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_1 ){
 			this.player = PLAYER_1;
 			
-		} else if( this.network.getPlayer().getType() == PlayerInstance.Type.PLAYER_2 ){
+		} else if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_2 ){
 			this.player = PLAYER_2;
 			this.gameState = GAME_STATE_PLAYER_1;
-			this.network.send(new ShisimaPacket("","","","start"));
+			this.gameService.startGame();
 		}
 		
 		CreatePieces();
@@ -286,10 +286,8 @@ public class ShisimaGame  {
 	}
 	
 	public void sendGameStatus(int pieceId, int row, int column){
-		ShisimaPacket pack = new ShisimaPacket("","",pieceId+","+row+","+column,"");
 		try{
-			System.out.println("Sending packet");
-			this.network.send(pack);
+			this.gameService.movePiece(pieceId, row, column);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
