@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 import listeners.PiecesDragAndDropListener;
 import logic.ShisimaGame;
 import net.RemoteGameService;
-import net.RestartGameInterface;
 import net.UpdateGameStatusInterface;
 import utils.Coordinates;
 import logic.Piece;
@@ -305,36 +304,26 @@ public class ShisimaGui extends JPanel implements UpdateGameStatusInterface
 			} else {
 				JOptionPane.showMessageDialog(null, "You loose!!!");
 			}
+			
 			this.shisimaGame.setGamesPlayed(this.shisimaGame.getGamesPlayed() + 1);
 			this.gamesPlayed.setText("Games: "+this.shisimaGame.getGamesPlayed());
 			this.wins.setText("Wins: "+this.shisimaGame.getWins());
 			
-			int reply = JOptionPane.showConfirmDialog(null, "Do you really want to play a new Shisima Game?", "Play Again", JOptionPane.YES_NO_OPTION);
-	        if (reply == JOptionPane.YES_OPTION) {
-	        	// create chess game
-	        	this.shisimaGame.restart();
-	        	if( this.shisimaGame.getPlayer() == shisimaGame.PLAYER_1){
-	        		this.instruction.setText("Start the game");
-	        	}else{
-	        		this.instruction.setText("Wait the opponent's move");
-	        	}
-	        	piecesGui.clear();	        	
-	    		for (Piece piece : this.shisimaGame.getPieces()) {
-	    			createAndAddGuiPiece(piece);
-	    		}
-	 			this.repaint();
-	        }
-	        
+			this.shisimaGame.restart();
+        	if( this.shisimaGame.getPlayer() == ShisimaGame.PLAYER_1){
+        		this.instruction.setText("Red, Start the game");
+        	}else{
+        		this.instruction.setText("Wait the opponent's move");
+        	}
+        	piecesGui.clear();	        	
+    		for (Piece piece : this.shisimaGame.getPieces()) {
+    			createAndAddGuiPiece(piece);
+    		}
+ 			this.repaint();
 		}
 	}
 
 	/**
-	 * change location of given piece, if the location is valid.
-	 * If the location is not valid, move the piece back to its original
-	 * position.
-	 * @param dragPiece
-	 * @param x
-	 * @param y
 	 */
 	public void setNewPieceLocation(PieceGui dragPiece, int x, int y) {
 		int targetRow = this.convertCoodinatesToRow(x,y);
@@ -360,6 +349,15 @@ public class ShisimaGui extends JPanel implements UpdateGameStatusInterface
 		}
 		
 	}
+	public void reset(){
+		this.shisimaGame.reset();
+		this.piecesGui.clear();
+		//wrap game pieces into their graphical representation
+		for (Piece piece : this.shisimaGame.getPieces()) {
+			createAndAddGuiPiece(piece);
+		}
+		this.repaint();
+	}
 	
 	@Override
 	public void updatePieceMoviment(int pieceId, int row, int column) throws RemoteException {
@@ -368,20 +366,35 @@ public class ShisimaGui extends JPanel implements UpdateGameStatusInterface
 			if ( p.getPiece().getId() == pieceId 
 					&& p.getPiece().getType() != this.getPlayer() ){
 				p.getPiece().setRowColumn(row, column);
-				this.instruction.setText("Your move");
+				if( this.shisimaGame.getPlayer() == ShisimaGame.PLAYER_1){
+					this.instruction.setText("Red, your move!!!");
+				}else {
+					this.instruction.setText("Yellow, your move!!!");
+				}
 				p.resetToUnderlyingPiecePosition();
 				this.changeGameState();
 				this.repaint();
 			}
 		}
-		detectWinner();
+		
+		Thread t = new Thread(new Runnable(){
+	        public void run(){
+	        	detectWinner();
+	        }
+	    });
+		t.start();
 	}
 
 	@Override
 	public void startGame() {
-		JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
 		this.instruction.setText("Start the game");
 		this.changeGameState();
+		Thread t = new Thread(new Runnable(){
+	        public void run(){
+	        	JOptionPane.showMessageDialog(null, "Other player detected. Starting Shisima Game!!!");
+	        }
+	    });
+		t.start();
 	}
 
 }

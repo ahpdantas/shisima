@@ -1,6 +1,8 @@
 package net;
 
 import java.rmi.RemoteException;
+
+import rmi.GameInstance.States;
 import rmi.GameMethodsInterface;
 import rmi.PlayerInstance;
 
@@ -48,6 +50,17 @@ public class RemoteGameService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public States getGameState(){
+		States s = null;
+		try {
+			s = this.remoteGame.getGameState(this.player);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return s;
 	}
 	
 	public void restartGame(){

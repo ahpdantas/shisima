@@ -29,16 +29,6 @@ public class RestartListener implements ActionListener, RestartGameInterface {
 		
 	}
 	
-	private void restartGame(){
-		app.remove(app.chat);
-		app.remove(app.shisima);
-		app.chat = new ChatGui(app.getUserName(),app.remoteGame);
-		app.shisima = new ShisimaGui(app.remoteGame);
-		app.add(app.chat);
-		app.add(app.shisima);
-		app.pack();
-	}
-	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		int reply = JOptionPane.showConfirmDialog(null, "Do you really want to restart the Shisima Game?", "Exit Shisima Game", JOptionPane.YES_NO_OPTION);
@@ -49,14 +39,19 @@ public class RestartListener implements ActionListener, RestartGameInterface {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-        	restartGame();
+    		this.app.shisima.reset();
         }
 	}
 
 	@Override
 	public void RestartGame() {
-		JOptionPane.showMessageDialog(null, "The other player restarted Shisima Game.");
-		restartGame();
+		Thread t = new Thread(new Runnable(){
+	        public void run(){
+	        	JOptionPane.showMessageDialog(null, "The other player restarted Shisima Game.");
+	    		app.shisima.reset();
+	        }
+	    });
+	  t.start();
 	}
 
 

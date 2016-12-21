@@ -47,8 +47,12 @@ public class ExitListener implements ActionListener, CloseGameInterface {
 
 	@Override
 	public void closeGame() {
-		JOptionPane.showMessageDialog(null, "The other player closed Shisima Game.");
-		System.exit(0);
+		Thread t = new Thread(new Runnable(){
+	        public void run(){
+	        	JOptionPane.showMessageDialog(null, "The other player closed Shisima Game.");
+	    		System.exit(0);	        }
+	    });
+	  t.start();
 	}
 
 }

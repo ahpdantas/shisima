@@ -5,6 +5,7 @@ import java.util.List;
 
 import logic.Piece;
 import net.RemoteGameService;
+import rmi.GameInstance.States;
 import rmi.GameMethodsInterface;
 import rmi.PlayerInstance;
 import utils.Coordinates;
@@ -34,14 +35,17 @@ public class ShisimaGame  {
 		
 		if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_1 ){
 			this.player = PLAYER_1;
-			System.out.println("I'm player1");
-			
+			this.gameState = GAME_STATE_PLAYER_2;
 		} else if( this.gameService.getPlayer().getType() == PlayerInstance.Type.PLAYER_2 ){
 			this.player = PLAYER_2;
 			this.gameState = GAME_STATE_PLAYER_1;
-			this.gameService.startGame();
 		}
 		
+		States s = this.gameService.getGameState();
+		System.out.println("State:"+ s);
+		if(  s == States.RUNNING_GAME ){
+			this.gameService.startGame();
+		}
 		CreatePieces();
 	}
 	
@@ -56,7 +60,6 @@ public class ShisimaGame  {
 	}
 	
 	public void restart(){
-		
     	if( this.player == ShisimaGame.PLAYER_1 ){
     		this.player = ShisimaGame.PLAYER_2;
     	}else if( this.player == ShisimaGame.PLAYER_2 ){
@@ -66,6 +69,10 @@ public class ShisimaGame  {
     	this.gameState = GAME_STATE_PLAYER_1;
     	this.winner = UNKNOWN;
     	
+    	this.reset();
+	}
+	
+	public void reset(){
     	pieces.clear();
     	CreatePieces();
 	}

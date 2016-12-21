@@ -126,8 +126,7 @@ public class ShisimaApp extends JFrame{
 				
         try {
             Registry registry = LocateRegistry.getRegistry(null);
-            ShisimaApp player = new ShisimaApp( 
-            		new RemoteGameService((GameMethodsInterface) registry.lookup("GameMethods"))); 
+            new ShisimaApp(new RemoteGameService((GameMethodsInterface) registry.lookup("GameMethods"))); 
          } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();

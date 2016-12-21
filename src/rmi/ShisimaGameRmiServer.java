@@ -6,6 +6,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import rmi.GameInstance.States;
+
 public class ShisimaGameRmiServer implements GameMethodsInterface {
 	private List<GameInstance> games = new ArrayList<GameInstance>();
 	
@@ -57,6 +59,17 @@ public class ShisimaGameRmiServer implements GameMethodsInterface {
 		}
 	}
 	
+	@Override
+	public States getGameState(PlayerInstance p) {
+		System.out.println("Get Game State");
+		for (GameInstance game : this.games) {
+			if( game.getSerialID().compareTo(p.getGameID()) == 0 ) {
+				return game.getState();
+			}
+		}
+		return null;
+	}
+	
 
 	@Override
 	public void closeGame(PlayerInstance p) {
@@ -99,5 +112,6 @@ public class ShisimaGameRmiServer implements GameMethodsInterface {
 		}
         System.err.println("Shisima Server Ready...");
 	}
+
 
 }
